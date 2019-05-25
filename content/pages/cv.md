@@ -5,7 +5,6 @@ template: "page"
 
 Work experience
 ---------------
-
 ### Senior Software EngineerJanuary 2006 — Present
 
 _VistaPrint, Full-Time_
@@ -38,7 +37,6 @@ Designed and implemented web front-end and automated hard drive imaging system. 
 
 Accolades
 ---------
-
 ### Microsoft Imagine Cup 2005, 2004
 
 _2005 National Winner 3rd Place, 2005 Regional Winner 1st Place, 2004 Regional Winner 1st Place_
@@ -47,7 +45,7 @@ _2005 National Winner 3rd Place, 2005 Regional Winner 1st Place, 2004 Regional W
 
 _Awarded LaCLA full academic scholarship in sophomore year (2001) and maintained until completion of undergraduate degree (2005)_
 
-### Outstanding Computer Technology Student Award2000
+### Outstanding Computer Technology Student Award 2000
 
 _Class of 2000, Achievement award presented to one student per year._
 
@@ -57,8 +55,7 @@ _1st place Computer Networking (2000)_
 
 Education
 ---------
-
-### Northeastern University, Boston2000 — 2005
+### Northeastern University, Boston 2000 — 2005
 
 _Bachelor of Science in Computer Science, Minor in Electrical Engineering_
 
