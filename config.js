@@ -28,11 +28,10 @@ module.exports = {
     bio: 'Howdy! My name is Fermin. Jorel Fermin. I am a entrepreneur, software engineer, and constant wandering wonderer. Here you will find my thoughts, social media activity, CV/Resume, and current products. I hope you enjoy your stay.',
     contacts: {
       email: 'jorelius@gmail.com',
-      telegram: '#',
-      twitter: 'https://twitter.com/JorelFermin',
-      github: 'https://github.com/jorelius/',
-      rss: '#',
-      vkontakte: '#'
+      //telegram: '#',
+      twitter: 'JorelFermin',
+      github: 'jorelius',
+      //rss: '#',
     }
   }
 };
