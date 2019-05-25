@@ -30,7 +30,7 @@ module.exports = {
       email: 'jorelius@gmail.com',
       twitter: 'JorelFermin',
       github: 'jorelius',
-      rss: '#'
+      rss: '#/rss.xml'
     }
   }
 };
