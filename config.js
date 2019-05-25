@@ -7,7 +7,7 @@ module.exports = {
   copyright: '© All rights reserved.',
   disqusShortname: '',
   postsPerPage: 4,
-  googleAnalyticsId: 'UA-73379983-2',
+  googleAnalyticsId: 'UA-27856813-1',
   menu: [
     {
       label: 'Projects',
@@ -29,7 +29,7 @@ module.exports = {
   author: {
     name: 'Jorel Fermin',
     photo: '/photo.jpg',
-    bio: 'Howdy! My name is Fermin. Jorel Fermin. I am a entrepreneur, software engineer, and constant wandering wonderer. Here you will find my thoughts, social media activity, CV/Resume, and current products. I hope you enjoy your stay.',
+    bio: 'Howdy! My name is Fermin. Jorel Fermin. I am a software engineer and constant wandering wonderer.',
     contacts: {
       email: 'jorelius@gmail.com',
       twitter: 'JorelFermin',
