@@ -29,7 +29,8 @@ module.exports = {
     contacts: {
       email: 'jorelius@gmail.com',
       twitter: 'JorelFermin',
-      github: 'jorelius'
+      github: 'jorelius',
+      rss: '#'
     }
   }
 };
