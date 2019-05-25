@@ -1,9 +1,9 @@
 'use strict';
 
 module.exports = {
-  url: 'https://lumen.netlify.com',
-  title: 'Blog by John Doe',
-  subtitle: 'Pellentesque odio nisi, euismod in, pharetra a, ultricies in, diam. Sed arcu.',
+  url: 'https://jorelius.github.io',
+  title: 'Jorel Fermin',
+  subtitle: 'Lead Software Engineer.',
   copyright: '© All rights reserved.',
   disqusShortname: '',
   postsPerPage: 4,
@@ -23,14 +23,14 @@ module.exports = {
     }
   ],
   author: {
-    name: 'John Doe',
+    name: 'Jorel Fermin',
     photo: '/photo.jpg',
-    bio: 'Pellentesque odio nisi, euismod in, pharetra a, ultricies in, diam. Sed arcu.',
+    bio: 'Howdy! My name is Fermin. Jorel Fermin. I am a entrepreneur, software engineer, and constant wandering wonderer. Here you will find my thoughts, social media activity, CV/Resume, and current products. I hope you enjoy your stay.',
     contacts: {
-      email: '#',
+      email: 'jorelius@gmail.com',
       telegram: '#',
-      twitter: '#',
-      github: '#',
+      twitter: 'https://twitter.com/JorelFermin',
+      github: 'https://github.com/jorelius/',
       rss: '#',
       vkontakte: '#'
     }
