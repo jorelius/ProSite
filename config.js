@@ -10,8 +10,12 @@ module.exports = {
   googleAnalyticsId: 'UA-73379983-2',
   menu: [
     {
-      label: 'Articles',
+      label: 'Projects',
       path: '/'
+    },
+    {
+      label: 'About me',
+      path: '/pages/cv'
     },
     {
       label: 'About me',
@@ -30,7 +34,7 @@ module.exports = {
       email: 'jorelius@gmail.com',
       twitter: 'JorelFermin',
       github: 'jorelius',
-      rss: '#/rss.xml'
+      rss: '/rss.xml'
     }
   }
 };
