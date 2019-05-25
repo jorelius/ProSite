@@ -15,7 +15,6 @@ const useSiteMetadata = () => {
                 email
                 twitter
                 github
-                rss
               }
             }
             menu {
