@@ -1,6 +1,6 @@
 ---
 title: Benchmark Testing Services with Fenrir
-date: "2019-25-05T23:16:32.169Z"
+date: "2019-05-25T22:12:03.284Z"
 template: "post"
 draft: false
 slug: "/posts/service-testing-with-fenrir/"

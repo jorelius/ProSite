@@ -5,7 +5,9 @@ template: "page"
 
 Work experience
 ---------------
-### Senior Software EngineerJanuary 2006 — Present
+### Senior Software Engineer 
+
+_January 2006 — Present_
 
 _VistaPrint, Full-Time_
 
@@ -15,7 +17,9 @@ As Content Manager I have been entrusted with the stable release of content into
   
 Other responsibilities include ownership of document rendering, ownership and maintenance of design and content management tools, front end ASP .Net development, and Project Architect.
 
-### Software EngineerJuly 2004 — December 2005
+### Software Engineer
+
+_July 2004 — December 2005_
 
 _Auspice Corporation, Full-Time_
 
@@ -23,13 +27,17 @@ Working as a paid intern while still attending Northeastern University, I design
   
 After graduation I was offered a permanent position as a software engineer where I developed a PHP graphical data entry front end that managed a MySql database of cable modems for one of the top cable companies in the nation.
 
-### Software EngineerJune 2003 — December 2003
+### Software Engineer
+
+_June 2003 — December 2003_
 
 _Northrop Grumman Corporation, Full-Time Paid Intern_
 
 At Northrup Grumman I designed and developed an internal manufacturing system that streamlined and digitized a paper traveler based tracking system. It automated the tracking of efficiency matrices, hardware rollback, prototyping, review used, as well as being used in ISO 9001 auditing. My other duties entailed calibration, heat, and scale factor testing of fiber optic gyros and components.
 
-### Product Development Intern / Information Technology InternJanuary 2002 — December 2002
+### Product Development Intern / Information Technology Intern
+
+_January 2002 — December 2002_
 
 _Phase Forward Incorporated, Full-Time Paid Intern_
 
@@ -37,25 +45,30 @@ Designed and implemented web front-end and automated hard drive imaging system. 
 
 Accolades
 ---------
-### Microsoft Imagine Cup 2005, 2004
+### Microsoft Imagine Cup 
+_2005, 2004_
 
 _2005 National Winner 3rd Place, 2005 Regional Winner 1st Place, 2004 Regional Winner 1st Place_
 
-### LaCLA Academic Scholar 2001 — 2005
+### LaCLA Academic Scholar 
+_2001 — 2005_
 
 _Awarded LaCLA full academic scholarship in sophomore year (2001) and maintained until completion of undergraduate degree (2005)_
 
-### Outstanding Computer Technology Student Award 2000
+### Outstanding Computer Technology Student Award 
+_2000_
 
 _Class of 2000, Achievement award presented to one student per year._
 
-### Skills USA-VICA Award 2000
+### Skills USA-VICA Award 
+_2000_
 
 _1st place Computer Networking (2000)_
 
 Education
 ---------
-### Northeastern University, Boston 2000 — 2005
+### Northeastern University, Boston 
+_2000 — 2005_
 
 _Bachelor of Science in Computer Science, Minor in Electrical Engineering_
 
