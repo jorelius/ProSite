@@ -1,39 +1,31 @@
 ---
-title: Humane Typography in the Digital Age
-date: "2017-08-19T22:40:32.169Z"
+title: Benchmark Testing Services with Fenrir
+date: "2019-25-05T23:16:32.169Z"
 template: "post"
 draft: false
-slug: "/posts/humane-typography-in-the-digital-age/"
-category: "Typography"
+slug: "/posts/service-testing-with-fenrir/"
+category: "Service Testing"
 tags:
-  - "Design"
-  - "Typography"
+  - "Service Testing"
+  - "Fenrir"
   - "Web Development"
-description: "An Essay on Typography by Eric Gill takes the reader back to the year 1930. The year when a conflict between two worlds came to its term. The machines of the industrial world finally took over the handicrafts."
+description: "Benchmark testing service and how that relates to software stability with Fenrir."
 ---
 
-- [The first transition](#the-first-transition)
+- [Benchmark Testing](#benchmark-testing)
 - [The digital age](#the-digital-age)
 - [Loss of humanity through transitions](#loss-of-humanity-through-transitions)
 - [Chasing perfection](#chasing-perfection)
 
-An Essay on Typography by Eric Gill takes the reader back to the year 1930. The year when a conflict between two worlds came to its term. The machines of the industrial world finally took over the handicrafts.
+As APIs evolve, internal architecture and is refactored, we as good stuarts of our services take every reasonable set to maintain backwards compatibility and behavior parity. To do so we employ various techniques and tools to verify our are stable and performant. They may range from unit, module, and integration tests. Those are important tools and practices but you may be missing litmus of service health, Benchmark Testing.
 
-The typography of this industrial age was no longer handcrafted. Mass production and profit became more important. Quantity mattered more than the quality. The books and printed works in general lost a part of its humanity. The typefaces were not produced by craftsmen anymore. It was the machines printing and tying the books together now. The craftsmen had to let go of their craft and became a cog in the process. An extension of the industrial machine.
+## Benchmark Testing
 
-But the victory of the industrialism didn’t mean that the craftsmen were completely extinct. The two worlds continued to coexist independently. Each recognising the good in the other — the power of industrialism and the humanity of craftsmanship. This was the second transition that would strip typography of a part of its humanity. We have to go 500 years back in time to meet the first one.
+Benchmark testing, reference testing, or baseline testing takes a snapshot of current behavior and uses it as a basis of comparison against which service performance can be deemed broken if it performs below that Benchmark. At its core Benchmark Testing is about taking a reasonable measurement and comparing your service, api, or system against it.
 
-## The first transition
+![magnifying-glass.jpg](/media/magnifying-glass.jpg)
 
-A similar conflict emerged after the invention of the first printing press in Europe. Johannes Gutenberg invented movable type and used it to produce different compositions. His workshop could print up to 240 impressions per hour. Until then, the books were being copied by hand. All the books were handwritten and decorated with hand drawn ornaments and figures. A process of copying a book was long but each book, even a copy, was a work of art.
 
-The first printed books were, at first, perceived as inferior to the handwritten ones. They were smaller and cheaper to produce. Movable type provided the printers with flexibility that allowed them to print books in languages other than Latin. Gill describes the transition to industrialism as something that people needed and wanted. Something similar happened after the first printed books emerged. People wanted books in a language they understood and they wanted books they could take with them. They were hungry for knowledge and printed books satisfied this hunger.
-
-![42-line-bible.jpg](/media/42-line-bible.jpg)
-
-*The 42–Line Bible, printed by Gutenberg.*
-
-But, through this transition, the book lost a large part of its humanity. The machine took over most of the process but craftsmanship was still a part of it. The typefaces were cut manually by the first punch cutters. The paper was made by hand. The illustrations and ornaments were still being hand drawn. These were the remains of the craftsmanship that went almost extinct in the times of Eric Gill.
 
 ## The digital age
 
@@ -76,4 +68,4 @@ We lost a part of ourselves because of this chase after perfection. We forgot ab
 
 Human beings aren’t perfect. Perfection is something that will always elude us. There will always be a small part of humanity in everything we do. No matter how small that part, we should make sure that it transcends the limits of the medium. We have to think about the message first. What typeface should we use and why? Does the typeface match the message and what we want to communicate with it? What will be the leading and why? Will there be more typefaces in our design? On what ground will they be combined? What makes our design unique and why? This is the part of humanity that is left in typography. It might be the last part. Are we really going to give it up?
 
-*Originally published by [Matej Latin](http://matejlatin.co.uk/) on [Medium](https://medium.com/design-notes/humane-typography-in-the-digital-age-9bd5c16199bd?ref=webdesignernews.com#.lygo82z0x).*
+*[Fenrir](https://github.com/jorelius/Fenrir).*
