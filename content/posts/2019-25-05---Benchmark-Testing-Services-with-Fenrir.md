@@ -13,9 +13,7 @@ description: "Benchmark testing service and how that relates to software stabili
 ---
 
 - [Benchmark Testing](#benchmark-testing)
-- [The digital age](#the-digital-age)
-- [Loss of humanity through transitions](#loss-of-humanity-through-transitions)
-- [Chasing perfection](#chasing-perfection)
+
 
 As APIs evolve, internal architecture and is refactored, we as good stuarts of our services take every reasonable set to maintain backwards compatibility and behavior parity. To do so we employ various techniques and tools to verify our are stable and performant. They may range from unit, module, and integration tests. Those are important tools and practices but you may be missing litmus of service health, Benchmark Testing.
 
