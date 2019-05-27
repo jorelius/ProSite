@@ -33,6 +33,7 @@ module.exports = {
     contacts: {
       email: 'jorelius@gmail.com',
       twitter: 'JorelFermin',
+      linkedin: 'jorel',
       github: 'jorelius',
       rss: '/rss.xml'
     }
