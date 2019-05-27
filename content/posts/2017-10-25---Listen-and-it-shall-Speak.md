@@ -1,6 +1,6 @@
 ---
 title: "Listen and it shall Speak"
-date: "2018-11-04T22:12:03.284Z"
+date: "2017-10-25T22:12:03.284Z"
 template: "post"
 draft: false
 slug: "/posts/listen-and-it-shall-speak/"
