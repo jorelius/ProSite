@@ -8,7 +8,7 @@ category: "Formats"
 tags:
   - "Open source"
   - "Web Standard"
-  - "http"
+  - "Http"
 description: "Open source initiative to create a JSON-based standard for http request chains. JSON Http Request tree is a standard to empower developers."
 ---
 
