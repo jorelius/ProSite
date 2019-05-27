@@ -4,7 +4,7 @@ date: "2019-05-25T22:12:03.284Z"
 template: "post"
 draft: false
 slug: "/posts/service-testing-with-fenrir/"
-category: "Service Testing"
+category: "Tools"
 tags:
   - "Service Testing"
   - "Fenrir"
