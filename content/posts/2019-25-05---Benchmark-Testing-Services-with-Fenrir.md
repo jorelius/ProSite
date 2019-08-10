@@ -16,6 +16,7 @@ description: "Benchmark testing service and how that relates to software stabili
 ![magnifying-glass.jpg](/media/magnifying-glass.jpg)
 
 - [Benchmark Testing](#benchmark-testing)
+- [Fenrir](#fenrir)
 
 As APIs evolve, internal architecture is updated and refactored, we as good stuarts of our services take every reasonable step to maintain backwards compatibility, behavior and performance parity. To do so we employ various techniques and tools to verify our are stable and performant. They may range from unit, module, and integration tests. Those are important tools and practices but you may be missing and important litmus of service health, Benchmark Testing.
 

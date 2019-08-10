@@ -5,9 +5,22 @@ template: "page"
 
 Work experience
 ---------------
+
+### Lead Software Engineer 
+
+_January 2015 — Present_
+
+_Cimpress (Parent of Vistaprint), Full-Time_
+
+Designed new document composition engine that reduces time to market from seven days to thirty minutes. Time savings has lead to increased quality of dynamic renders and new capabilities that are used across the organization. In addition to quality increases and time savings, the engine has been leveraged to increase conversion rate and overall order value.  
+  
+As Content Manager I have been entrusted with the stable release of content into the production environment. To reduce inefficiencies in the mostly manual process I designed C#/.net tools that fully automate content migration to production releasing developers from manually shepherding content thereby reducing cost through efficiency.  
+  
+Other responsibilities include ownership of document rendering, ownership and maintenance of design and content management tools, front end ASP .Net development, and Project Architect.
+
 ### Senior Software Engineer 
 
-_January 2006 — Present_
+_January 2006 — January 2015_
 
 _VistaPrint, Full-Time_
 
