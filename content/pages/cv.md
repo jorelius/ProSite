@@ -86,3 +86,10 @@ _2000 — 2005_
 _Bachelor of Science in Computer Science, Minor in Electrical Engineering_
 
 At Northeastern University I studied Computer Science and Electrical Engineering. As part of my studies I completed one year of cooperative education in the workforce with several companies. All of which were paid internships. While at Northeastern I participated and served on the executive board of several professional societies [ACM](http://www.acm.org/) and [SHPE](http://www.shpe.org) among them. I also represented my university in competition at the Microsoft Imagine Cup receiving 1st in my region and 3rd nationally.
+
+Patents
+---------
+
+[Method and system for rendering images in scenes](https://patents.google.com/patent/US20120256948)
+
+[Method and system for personalizing images rendered in scenes for personalized customer experience](https://patents.google.com/patent/US9786079B2/en)
