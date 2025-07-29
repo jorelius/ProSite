@@ -6,9 +6,18 @@ template: "page"
 Work experience
 ---------------
 
+
+### Leat Software Development Engineer
+
+_January 2022 — Present_
+
+_Amazon Web Services (AWS), Full-Time_
+
+Core contributor to the launch of OpenSearch Serverless, delivering the Shard Manager and Autoscaling components from pre-GA to production. Designed and implemented systems that enabled predictive and reactive fleet autoscaling, optimizing worker resource usage and reducing operational cost via standby replica management and dense shard packing. Owned critical infrastructure for workload distribution, encryption-at-rest authorization flows, and real-time metrics delivery, coordinating with cross-team stakeholders across indexing, search, and security. Personally led multiple design and threat modeling efforts to improve reliability, responsiveness, and operational observability of core systems, reducing shard assignment latency by 75% and lowering customer costs through smarter scaling. Trusted to lead cross-service initiatives, unblock cross-team integrations, and drive key deliverables to completion.
+
 ### Lead Software Engineer 
 
-_January 2015 — Present_
+_January 2015 — January 2022_
 
 _Cimpress (Parent of Vistaprint), Full-Time_
 
