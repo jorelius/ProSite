@@ -1,0 +1,8 @@
+---
+import SidebarLayout from "../layouts/SidebarLayout.astro";
+import { SITE } from "../consts";
+---
+
+<SidebarLayout title={`Not Found - ${SITE.title}`} description={SITE.subtitle} pageTitle="NOT FOUND">
+  <p>You just hit a route that doesn't exist... the sadness.</p>
+</SidebarLayout>

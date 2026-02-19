@@ -1,0 +1,116 @@
+---
+interface FeedItem {
+  slug: string;
+  title: string;
+  date: Date;
+  category: string;
+  description: string;
+}
+
+interface Props {
+  items: FeedItem[];
+}
+
+const { items } = Astro.props;
+
+function formatDate(date: Date): string {
+  return date.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+}
+
+function kebabCase(str: string): string {
+  return str.toLowerCase().replace(/\s+/g, "-");
+}
+---
+
+<div class="feed">
+  {items.map((item) => (
+    <div class="feed__item">
+      <div class="feed__item-meta">
+        <time class="feed__item-meta-time" datetime={item.date.toISOString()}>
+          {formatDate(item.date)}
+        </time>
+        <span class="feed__item-meta-divider" />
+        <span class="feed__item-meta-category">
+          <a href={`/category/${kebabCase(item.category)}/`} class="feed__item-meta-category-link">
+            {item.category}
+          </a>
+        </span>
+      </div>
+      <h2 class="feed__item-title">
+        <a class="feed__item-title-link" href={`/posts/${item.slug}/`}>{item.title}</a>
+      </h2>
+      <p class="feed__item-description">{item.description}</p>
+      <a class="feed__item-readmore" href={`/posts/${item.slug}/`}>Read</a>
+    </div>
+  ))}
+</div>
+
+<style>
+  .feed__item {
+    margin-bottom: 32.5px;
+  }
+
+  .feed__item:last-child {
+    margin-bottom: 13px;
+  }
+
+  .feed__item-title {
+    font-size: 27px;
+    line-height: 39px;
+    margin-top: 0;
+    margin-bottom: 13px;
+  }
+
+  .feed__item-title-link {
+    color: #222;
+    text-decoration: none;
+  }
+
+  .feed__item-title-link:hover,
+  .feed__item-title-link:focus {
+    color: #222;
+    border-bottom: 1px solid #222;
+  }
+
+  .feed__item-description {
+    font-size: 16px;
+    line-height: 26px;
+    margin-bottom: 19.5px;
+  }
+
+  .feed__item-meta-time {
+    font-size: 14px;
+    color: #222;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .feed__item-meta-divider {
+    margin: 0 5px;
+  }
+
+  .feed__item-meta-category-link {
+    font-size: 14px;
+    color: #F7A046;
+    font-weight: 600;
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+
+  .feed__item-meta-category-link:hover,
+  .feed__item-meta-category-link:focus {
+    color: #5D93FF;
+  }
+
+  .feed__item-readmore {
+    font-size: 16px;
+    color: #5D93FF;
+    text-decoration: none;
+  }
+
+  .feed__item-readmore:hover,
+  .feed__item-readmore:focus {
+    color: #5D93FF;
+    border-bottom: 1px solid #5D93FF;
+  }
+</style>

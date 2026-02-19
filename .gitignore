@@ -1,9 +1,5 @@
 node_modules/
-flow-typed/
-.cache/
-public/
+dist/
+.astro/
+.DS_Store
 npm-debug.log
-.eslintcache
-.gatsby-context.js
-.idea
-gatsby-starter-lumen.iml

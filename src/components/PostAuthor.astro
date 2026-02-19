@@ -1,0 +1,40 @@
+---
+import { AUTHOR, getContactHref } from "../consts";
+---
+
+<div class="author">
+  <p class="author__bio">
+    {AUTHOR.bio}
+    <a
+      class="author__bio-link"
+      href={getContactHref("linkedin", AUTHOR.contacts.linkedin)}
+      rel="noopener noreferrer"
+      target="_blank"
+    >
+      Connect with <strong>{AUTHOR.name}</strong> on LinkedIn
+    </a>
+  </p>
+</div>
+
+<style>
+  .author {
+    border-top: 1px solid #dedede;
+    max-width: 640px;
+    padding-top: 20px;
+    line-height: 26px;
+    margin-top: 26px;
+    margin-bottom: 52px;
+  }
+
+  .author__bio-link {
+    display: block;
+    text-decoration: underline;
+  }
+
+  @media screen and (min-width: 685px) {
+    .author {
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+</style>

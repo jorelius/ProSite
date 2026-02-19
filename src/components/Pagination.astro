@@ -1,0 +1,82 @@
+---
+interface Props {
+  prevPagePath: string;
+  nextPagePath: string;
+  hasPrevPage: boolean;
+  hasNextPage: boolean;
+}
+
+const { prevPagePath, nextPagePath, hasPrevPage, hasNextPage } = Astro.props;
+---
+
+<div class="pagination">
+  <div class="pagination__prev">
+    <a
+      rel="prev"
+      href={prevPagePath}
+      class:list={["pagination__prev-link", { "pagination__prev-link--disable": !hasPrevPage }]}
+    >
+      &larr; PREV
+    </a>
+  </div>
+  <div class="pagination__next">
+    <a
+      rel="next"
+      href={nextPagePath}
+      class:list={["pagination__next-link", { "pagination__next-link--disable": !hasNextPage }]}
+    >
+      &rarr; NEXT
+    </a>
+  </div>
+</div>
+
+<style>
+  .pagination {
+    margin-top: 52px;
+    display: flex;
+  }
+
+  .pagination__prev {
+    width: 50%;
+    text-align: left;
+  }
+
+  .pagination__prev-link {
+    color: #F7A046;
+    font-size: 26px;
+    font-weight: bold;
+    text-decoration: none;
+  }
+
+  .pagination__prev-link:hover,
+  .pagination__prev-link:focus {
+    color: #5D93FF;
+  }
+
+  .pagination__prev-link--disable {
+    pointer-events: none;
+    color: #ababab;
+  }
+
+  .pagination__next {
+    width: 50%;
+    text-align: right;
+  }
+
+  .pagination__next-link {
+    color: #F7A046;
+    font-size: 26px;
+    font-weight: bold;
+    text-decoration: none;
+  }
+
+  .pagination__next-link:hover,
+  .pagination__next-link:focus {
+    color: #5D93FF;
+  }
+
+  .pagination__next-link--disable {
+    pointer-events: none;
+    color: #ababab;
+  }
+</style>

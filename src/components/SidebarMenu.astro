@@ -1,0 +1,59 @@
+---
+import { MENU } from "../consts";
+
+const currentPath = Astro.url.pathname;
+---
+
+<nav class="menu">
+  <ul class="menu__list">
+    {MENU.map((item) => (
+      <li class="menu__list-item">
+        <a
+          href={item.path}
+          class:list={[
+            "menu__list-item-link",
+            { "menu__list-item-link--active": currentPath === item.path || currentPath === item.path + "/" },
+          ]}
+        >
+          {item.label}
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>
+
+<style>
+  .menu {
+    margin-bottom: 26px;
+  }
+
+  .menu__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .menu__list-item {
+    padding: 0;
+    margin: 10px 0;
+  }
+
+  .menu__list-item-link {
+    font-size: 16px;
+    color: #222;
+    font-weight: normal;
+    border: 0;
+    text-decoration: none;
+  }
+
+  .menu__list-item-link:hover,
+  .menu__list-item-link:focus {
+    color: #5D93FF;
+    border-bottom: 1px solid #5D93FF;
+  }
+
+  .menu__list-item-link--active {
+    color: #222;
+    border-bottom: 1px solid #222;
+  }
+</style>

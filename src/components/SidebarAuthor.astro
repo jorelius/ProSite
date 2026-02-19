@@ -1,0 +1,64 @@
+---
+import { AUTHOR } from "../consts";
+
+interface Props {
+  isIndex?: boolean;
+}
+
+const { isIndex = false } = Astro.props;
+---
+
+<div class="author">
+  <a href="/">
+    <img
+      src={AUTHOR.photo}
+      class="author__photo"
+      width="75"
+      height="75"
+      alt={AUTHOR.name}
+    />
+  </a>
+
+  {isIndex ? (
+    <h1 class="author__title">
+      <a class="author__title-link" href="/">{AUTHOR.name}</a>
+    </h1>
+  ) : (
+    <h2 class="author__title">
+      <a class="author__title-link" href="/">{AUTHOR.name}</a>
+    </h2>
+  )}
+  <p class="author__subtitle">{AUTHOR.bio}</p>
+</div>
+
+<style>
+  .author__photo {
+    display: inline-block;
+    margin-bottom: 0;
+    border-radius: 50%;
+    background-clip: padding-box;
+  }
+
+  .author__title {
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 29.25px;
+    margin: 13px 0;
+  }
+
+  .author__title-link {
+    color: #222;
+    text-decoration: none;
+  }
+
+  .author__title-link:hover,
+  .author__title-link:focus {
+    color: #222;
+  }
+
+  .author__subtitle {
+    color: #757575;
+    line-height: 26px;
+    margin-bottom: 26px;
+  }
+</style>

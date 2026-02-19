@@ -1,0 +1,75 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import Sidebar from "../components/Sidebar.astro";
+
+interface Props {
+  title: string;
+  description?: string;
+  pageTitle?: string;
+  isIndex?: boolean;
+}
+
+const { title, description, pageTitle, isIndex = false } = Astro.props;
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="sidebar-layout">
+    <Sidebar isIndex={isIndex} />
+    <div class="page">
+      <div class="page__inner">
+        {pageTitle && <h1 class="page__title">{pageTitle}</h1>}
+        <div class="page__body">
+          <slot />
+        </div>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .sidebar-layout {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .page {
+    width: 100%;
+    margin-bottom: 52px;
+  }
+
+  .page__inner {
+    padding: 25px 20px;
+  }
+
+  .page__title {
+    font-size: 40px;
+    font-weight: 600;
+    line-height: 52px;
+    margin-top: 0;
+    margin-bottom: 37.7px;
+  }
+
+  .page__body {
+    font-size: 16px;
+    line-height: 26px;
+    margin: 0 0 26px;
+  }
+
+  @media screen and (min-width: 685px) {
+    .page {
+      width: 58.333%;
+    }
+    .page__inner {
+      padding: 30px 20px;
+    }
+  }
+
+  @media screen and (min-width: 960px) {
+    .page {
+      width: 66.667%;
+    }
+    .page__inner {
+      padding: 40px 35px;
+    }
+  }
+</style>

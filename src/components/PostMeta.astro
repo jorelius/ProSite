@@ -1,0 +1,23 @@
+---
+interface Props {
+  date: Date;
+}
+
+const { date } = Astro.props;
+
+const formatted = date.toLocaleDateString("en-US", {
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+});
+---
+
+<div class="meta">
+  <p class="meta__date">Published {formatted}</p>
+</div>
+
+<style>
+  .meta__date {
+    font-style: italic;
+  }
+</style>

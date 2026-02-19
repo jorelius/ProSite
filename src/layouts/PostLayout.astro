@@ -1,0 +1,157 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import PostMeta from "../components/PostMeta.astro";
+import PostTags from "../components/PostTags.astro";
+import PostAuthor from "../components/PostAuthor.astro";
+
+interface Props {
+  title: string;
+  description?: string;
+  postTitle: string;
+  date: Date;
+  tags?: string[];
+}
+
+const { title, description, postTitle, date, tags } = Astro.props;
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="post">
+    <a class="post__home-button" href="/">All Articles</a>
+
+    <div class="post__content">
+      <div class="content">
+        <h1 class="content__title">{postTitle}</h1>
+        <div class="content__body">
+          <slot />
+        </div>
+      </div>
+    </div>
+
+    <div class="post__footer">
+      <PostMeta date={date} />
+      {tags && tags.length > 0 && <PostTags tags={tags} />}
+      <PostAuthor />
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .post__home-button {
+    display: block;
+    max-width: 90px;
+    height: 35px;
+    padding: 0 24px;
+    line-height: 35px;
+    text-align: center;
+    color: #222;
+    border: 1px solid #dedede;
+    border-radius: 20px;
+    font-size: 16px;
+    font-weight: normal;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 26px;
+    text-decoration: none;
+  }
+
+  .post__home-button:hover,
+  .post__home-button:focus {
+    color: #5D93FF;
+  }
+
+  .post__footer {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 0 15px;
+  }
+
+  .content {
+    max-width: 945px;
+    padding: 0 15px;
+    margin: 0 auto;
+  }
+
+  .content__title {
+    font-size: 32px;
+    max-width: 640px;
+    margin-left: auto;
+    margin-right: auto;
+    font-weight: 600;
+    text-align: center;
+    line-height: 42.9px;
+    margin-top: 26px;
+    margin-bottom: 0;
+  }
+
+  .content__body {
+    max-width: 640px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .content__body :global(a) {
+    text-decoration: underline;
+  }
+
+  .content__body :global(*) {
+    max-width: 640px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .content__body :global(img) {
+    max-width: 100%;
+  }
+
+  .content__body :global(figure) {
+    margin-bottom: 26px;
+  }
+
+  .content__body :global(figure blockquote) {
+    font-style: italic;
+    text-align: center;
+    margin-top: 0;
+    padding: 26px 0;
+  }
+
+  .content__body :global(figure blockquote p) {
+    max-width: 640px;
+    font-size: 26.9px;
+    margin-top: 0;
+    margin-bottom: 26px;
+    line-height: 39px;
+  }
+
+  @media screen and (min-width: 960px) {
+    .post__footer {
+      padding: 0;
+    }
+    .post__home-button {
+      position: fixed;
+      max-width: none;
+      margin: 0;
+      top: 30px;
+      left: 30px;
+    }
+    .content {
+      padding: 0;
+    }
+    .content__title {
+      font-size: 48px;
+      line-height: 58.5px;
+      margin-top: 58.5px;
+      margin-bottom: 39px;
+    }
+    .content__body {
+      font-size: 18px;
+      line-height: 29.25px;
+      margin-bottom: 29.25px;
+    }
+    .content__body :global(p) {
+      font-size: 18px;
+      line-height: 29.25px;
+      margin-bottom: 29.25px;
+    }
+  }
+</style>

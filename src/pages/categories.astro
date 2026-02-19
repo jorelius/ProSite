@@ -1,0 +1,31 @@
+---
+import { getCollection } from "astro:content";
+import SidebarLayout from "../layouts/SidebarLayout.astro";
+import { SITE } from "../consts";
+
+const allPosts = await getCollection("posts", ({ data }) => !data.draft);
+
+const categoryCounts: Record<string, number> = {};
+for (const post of allPosts) {
+  const cat = post.data.category;
+  categoryCounts[cat] = (categoryCounts[cat] || 0) + 1;
+}
+
+const categories = Object.entries(categoryCounts).sort((a, b) => a[0].localeCompare(b[0]));
+
+function kebabCase(str: string): string {
+  return str.toLowerCase().replace(/\s+/g, "-");
+}
+---
+
+<SidebarLayout title={`Categories - ${SITE.title}`} description={SITE.subtitle} pageTitle="Categories">
+  <ul>
+    {categories.map(([category, count]) => (
+      <li>
+        <a href={`/category/${kebabCase(category)}/`}>
+          {category} ({count})
+        </a>
+      </li>
+    ))}
+  </ul>
+</SidebarLayout>

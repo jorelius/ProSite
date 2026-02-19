@@ -1,0 +1,61 @@
+---
+import SidebarAuthor from "./SidebarAuthor.astro";
+import SidebarMenu from "./SidebarMenu.astro";
+import SidebarContacts from "./SidebarContacts.astro";
+import SidebarCopyright from "./SidebarCopyright.astro";
+
+interface Props {
+  isIndex?: boolean;
+}
+
+const { isIndex = false } = Astro.props;
+---
+
+<div class="sidebar">
+  <div class="sidebar__inner">
+    <SidebarAuthor isIndex={isIndex} />
+    <SidebarMenu />
+    <SidebarContacts />
+    <SidebarCopyright />
+  </div>
+</div>
+
+<style>
+  .sidebar {
+    width: 100%;
+  }
+
+  .sidebar__inner {
+    position: relative;
+    padding: 25px 20px 0;
+  }
+
+  @media screen and (min-width: 685px) {
+    .sidebar {
+      width: 41.667%;
+    }
+    .sidebar__inner {
+      padding: 30px 20px 0;
+    }
+    .sidebar__inner::after {
+      background: #dedede;
+      background: linear-gradient(to bottom, #dedede 0%, #dedede 48%, #FFF 100%);
+      position: absolute;
+      content: '';
+      width: 1px;
+      height: 540px;
+      top: 30px;
+      right: -10px;
+      bottom: 0;
+    }
+  }
+
+  @media screen and (min-width: 960px) {
+    .sidebar {
+      width: 33.333%;
+    }
+    .sidebar__inner {
+      padding: 40px;
+    }
+  }
+</style>

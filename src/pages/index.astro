@@ -1,0 +1,64 @@
+---
+import { getCollection } from "astro:content";
+import SidebarLayout from "../layouts/SidebarLayout.astro";
+import Feed from "../components/Feed.astro";
+import Pagination from "../components/Pagination.astro";
+import { SITE } from "../consts";
+
+const allPosts = (await getCollection("posts", ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const postsPerPage = SITE.postsPerPage;
+const posts = allPosts.slice(0, postsPerPage);
+const hasNextPage = allPosts.length > postsPerPage;
+
+const feedItems = posts.map((post) => ({
+  slug: post.data.slug || post.slug,
+  title: post.data.title,
+  date: post.data.date,
+  category: post.data.category,
+  description: post.data.description,
+}));
+---
+
+<SidebarLayout title={SITE.title} description={SITE.subtitle} isIndex={true}>
+  <div class="intro">
+    <p>
+      Lead Software Development Engineer at <strong>AWS</strong>, building cloud infrastructure and cost optimization tools.
+      20+ years shipping high-throughput systems at scale. Two US patents. Currently building a <strong>cloud cost SaaS</strong>.
+    </p>
+  </div>
+  <h2 class="section-heading">Writing</h2>
+  <Feed items={feedItems} />
+  <Pagination
+    prevPagePath="/"
+    nextPagePath="/page/2/"
+    hasPrevPage={false}
+    hasNextPage={hasNextPage}
+  />
+</SidebarLayout>
+
+<style>
+  .intro {
+    margin-bottom: 26px;
+    padding-bottom: 26px;
+    border-bottom: 1px solid #dedede;
+  }
+
+  .intro p {
+    font-size: 17px;
+    line-height: 28px;
+    color: #222;
+    margin: 0;
+  }
+
+  .section-heading {
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #757575;
+    margin-top: 0;
+    margin-bottom: 26px;
+  }
+</style>
