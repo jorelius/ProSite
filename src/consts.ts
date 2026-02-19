@@ -49,6 +49,12 @@ export const ICONS: Record<string, { path: string; viewBox: string }> = {
   },
 };
 
+/** Prepend the Astro base path to an internal path */
+export function url(path: string): string {
+  const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+  return `${base}${path.startsWith("/") ? path : `/${path}`}`;
+}
+
 export function getContactHref(name: string, contact: string): string {
   switch (name) {
     case "twitter":
@@ -59,6 +65,8 @@ export function getContactHref(name: string, contact: string): string {
       return `https://github.com/${contact}`;
     case "email":
       return `mailto:${contact}`;
+    case "rss":
+      return url(contact);
     default:
       return contact;
   }

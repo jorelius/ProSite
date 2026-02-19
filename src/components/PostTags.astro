@@ -1,4 +1,6 @@
 ---
+import { url } from "../consts";
+
 interface Props {
   tags: string[];
 }
@@ -14,7 +16,7 @@ function kebabCase(str: string): string {
   <ul class="tags__list">
     {tags.map((tag) => (
       <li class="tags__list-item">
-        <a href={`/tag/${kebabCase(tag)}/`} class="tags__list-item-link">
+        <a href={url(`/tag/${kebabCase(tag)}/`)} class="tags__list-item-link">
           {tag}
         </a>
       </li>

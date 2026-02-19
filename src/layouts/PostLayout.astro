@@ -3,6 +3,7 @@ import BaseLayout from "./BaseLayout.astro";
 import PostMeta from "../components/PostMeta.astro";
 import PostTags from "../components/PostTags.astro";
 import PostAuthor from "../components/PostAuthor.astro";
+import { url } from "../consts";
 
 interface Props {
   title: string;
@@ -17,7 +18,7 @@ const { title, description, postTitle, date, tags } = Astro.props;
 
 <BaseLayout title={title} description={description}>
   <div class="post">
-    <a class="post__home-button" href="/">All Articles</a>
+    <a class="post__home-button" href={url("/")}>All Articles</a>
 
     <div class="post__content">
       <div class="content">

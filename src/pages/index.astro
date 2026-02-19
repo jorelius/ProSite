@@ -3,7 +3,7 @@ import { getCollection } from "astro:content";
 import SidebarLayout from "../layouts/SidebarLayout.astro";
 import Feed from "../components/Feed.astro";
 import Pagination from "../components/Pagination.astro";
-import { SITE } from "../consts";
+import { SITE, url } from "../consts";
 
 const allPosts = (await getCollection("posts", ({ data }) => !data.draft))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
@@ -31,8 +31,8 @@ const feedItems = posts.map((post) => ({
   <h2 class="section-heading">Writing</h2>
   <Feed items={feedItems} />
   <Pagination
-    prevPagePath="/"
-    nextPagePath="/page/2/"
+    prevPagePath={url("/")}
+    nextPagePath={url("/page/2/")}
     hasPrevPage={false}
     hasNextPage={hasNextPage}
   />

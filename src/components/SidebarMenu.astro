@@ -1,24 +1,27 @@
 ---
-import { MENU } from "../consts";
+import { MENU, url } from "../consts";
 
 const currentPath = Astro.url.pathname;
 ---
 
 <nav class="menu">
   <ul class="menu__list">
-    {MENU.map((item) => (
-      <li class="menu__list-item">
-        <a
-          href={item.path}
-          class:list={[
-            "menu__list-item-link",
-            { "menu__list-item-link--active": currentPath === item.path || currentPath === item.path + "/" },
-          ]}
-        >
-          {item.label}
-        </a>
-      </li>
-    ))}
+    {MENU.map((item) => {
+      const href = url(item.path);
+      return (
+        <li class="menu__list-item">
+          <a
+            href={href}
+            class:list={[
+              "menu__list-item-link",
+              { "menu__list-item-link--active": currentPath === href || currentPath === href + "/" },
+            ]}
+          >
+            {item.label}
+          </a>
+        </li>
+      );
+    })}
   </ul>
 </nav>
 

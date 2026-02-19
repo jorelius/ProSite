@@ -1,4 +1,6 @@
 ---
+import { url } from "../consts";
+
 interface FeedItem {
   slug: string;
   title: string;
@@ -31,16 +33,16 @@ function kebabCase(str: string): string {
         </time>
         <span class="feed__item-meta-divider" />
         <span class="feed__item-meta-category">
-          <a href={`/category/${kebabCase(item.category)}/`} class="feed__item-meta-category-link">
+          <a href={url(`/category/${kebabCase(item.category)}/`)} class="feed__item-meta-category-link">
             {item.category}
           </a>
         </span>
       </div>
       <h2 class="feed__item-title">
-        <a class="feed__item-title-link" href={`/posts/${item.slug}/`}>{item.title}</a>
+        <a class="feed__item-title-link" href={url(`/posts/${item.slug}/`)}>{item.title}</a>
       </h2>
       <p class="feed__item-description">{item.description}</p>
-      <a class="feed__item-readmore" href={`/posts/${item.slug}/`}>Read</a>
+      <a class="feed__item-readmore" href={url(`/posts/${item.slug}/`)}>Read</a>
     </div>
   ))}
 </div>

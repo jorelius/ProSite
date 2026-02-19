@@ -1,5 +1,5 @@
 ---
-import { AUTHOR } from "../consts";
+import { AUTHOR, url } from "../consts";
 
 interface Props {
   isIndex?: boolean;
@@ -9,9 +9,9 @@ const { isIndex = false } = Astro.props;
 ---
 
 <div class="author">
-  <a href="/">
+  <a href={url("/")}>
     <img
-      src={AUTHOR.photo}
+      src={url(AUTHOR.photo)}
       class="author__photo"
       width="75"
       height="75"
@@ -21,11 +21,11 @@ const { isIndex = false } = Astro.props;
 
   {isIndex ? (
     <h1 class="author__title">
-      <a class="author__title-link" href="/">{AUTHOR.name}</a>
+      <a class="author__title-link" href={url("/")}>{AUTHOR.name}</a>
     </h1>
   ) : (
     <h2 class="author__title">
-      <a class="author__title-link" href="/">{AUTHOR.name}</a>
+      <a class="author__title-link" href={url("/")}>{AUTHOR.name}</a>
     </h2>
   )}
   <p class="author__subtitle">{AUTHOR.bio}</p>
