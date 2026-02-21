@@ -9,7 +9,7 @@ npm install
 npm run dev
 ```
 
-Site runs at `http://localhost:4321/ProSite/`.
+Site runs at `http://localhost:4321/`.
 
 ## Build
 
@@ -21,12 +21,7 @@ Static output goes to `dist/`.
 
 ## Deployment
 
-Deployed to GitHub Pages via GitHub Actions on push to `master`. The site is served at `https://jorelius.github.io/ProSite/`.
-
-To use a custom domain (e.g., `www.jorelfermin.com`):
-1. Configure the domain in your GitHub Pages settings
-2. Remove the `base: "/ProSite"` line from `astro.config.mjs`
-3. The `public/CNAME` file is already set to `www.jorelfermin.com`
+Deployed to GitHub Pages via GitHub Actions on push to `master`. The site is served at `https://www.jorelfermin.com`.
 
 ## Project Structure
 
