@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import { SITE } from "../consts";
 
 interface Props {
   title: string;
@@ -7,6 +8,7 @@ interface Props {
 }
 
 const { title, description } = Astro.props;
+const metaDescription = description || SITE.subtitle;
 ---
 
 <!doctype html>
@@ -14,7 +16,11 @@ const { title, description } = Astro.props;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    {description && <meta name="description" content={description} />}
+    <meta name="description" content={metaDescription} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={metaDescription} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={SITE.url} />
     <title>{title}</title>
   </head>
   <body>

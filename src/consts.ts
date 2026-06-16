@@ -1,7 +1,7 @@
 export const SITE = {
   url: "https://www.jorelfermin.com",
   title: "Jorel Fermin",
-  subtitle: "Lead Software Engineer. Building cloud cost tools. 20+ years shipping systems at scale.",
+  subtitle: "Engineer building Cloud Cost Analyzer at Dragon Fractal. Self-hosted AWS cost optimization. Docker-pullable, free Community tier.",
   copyright: "\u00a9 All rights reserved.",
   postsPerPage: 4,
 };
@@ -16,7 +16,7 @@ export const MENU = [
 export const AUTHOR = {
   name: "Jorel Fermin",
   photo: "/photo.jpg",
-  bio: "Lead Software Engineer at AWS. Building cloud infrastructure tools. Shipping systems at scale for 20+ years.",
+  bio: "Engineer building Cloud Cost Analyzer at Dragon Fractal. Self-hosted, free Community tier, real Docker image.",
   contacts: {
     email: "jorel.fermin@gmail.com",
     twitter: "JorelFermin",
