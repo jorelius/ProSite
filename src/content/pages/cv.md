@@ -4,9 +4,15 @@ title: "Curriculum Vitae"
 
 ## Experience
 
+### Founder & Engineer
+
+_2025 to Present_ | **Dragon Fractal**
+
+Building Cloud Cost Analyzer (CCA), a self-hosted AWS cost optimization tool. Connects via read-only IAM role, detects idle/orphaned resources (NAT Gateways, EBS volumes, Elastic IPs), quantifies log and cross-AZ overspend, and recommends specific fixes. Docker-pullable, Community tier free forever. Pro ($99/mo) adds history and alerts; Enterprise ($499/mo) adds team features. Azure support coming soon.
+
 ### Lead Software Development Engineer
 
-_January 2022 to Present_ | **Amazon Web Services (AWS)**
+_January 2022 to January 2026_ | **Amazon Web Services (AWS)**
 
 Core contributor for the launch of [OpenSearch Serverless](https://aws.amazon.com/opensearch-service/features/serverless/), delivering the Shard Manager and Autoscaling components from proof of concept to general availability in production. Designed and implemented systems that enabled predictive and reactive fleet autoscaling using Chronos models, optimizing worker resource usage and reducing operational cost via standby replica management and dense shard packing. Owned critical infrastructure for workload distribution, encryption-at-rest authorization flows, and real-time metrics delivery, coordinating with cross-team stakeholders across indexing, search, and security. Led multiple design and threat modeling efforts to improve reliability, responsiveness, and operational observability of core systems, reducing shard assignment latency by 75% and lowering customer costs through smarter scaling. Trusted to lead cross-service initiatives, unblock cross-team integrations, and drive key deliverables to completion.
 

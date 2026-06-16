@@ -2,11 +2,11 @@
 title: "About"
 ---
 
-I'm Jorel, a Lead Software Development Engineer at **Amazon Web Services** based in the Boston area. I work on [OpenSearch Serverless](https://aws.amazon.com/opensearch-service/features/serverless/), where I built the shard management and autoscaling systems that power the service: the infrastructure that decides how to distribute workloads, scale fleets, and keep costs down for customers.
+I'm Jorel -- engineer and founder of Dragon Fractal, building Cloud Cost Analyzer (CCA). After spending a year consulting on AWS cost optimization, I kept seeing the same patterns hidden in plain sight in AWS Cost Explorer -- idle NAT Gateways, unattached EBS volumes, CloudWatch logs no one reads, cross-AZ chatter. CCA surfaces these automatically with plain-English recommendations and Docker-pullable IAM-role detection. Community tier is free, forever.
 
-Before AWS, I spent 16 years at **Cimpress / Vistaprint** building high-throughput rendering and document services. One of those services handled 83,000 requests per minute. I hold two US patents in image rendering systems.
+Before that, I spent 4 years at **Amazon Web Services** as a Lead SDE on [OpenSearch Serverless](https://aws.amazon.com/opensearch-service/features/serverless/), where I built the shard management and autoscaling systems. And before AWS, 16 years at **Cimpress / Vistaprint** building high-throughput rendering and document services (one handling 83k requests per minute). Two US patents in image rendering.
 
-I'm currently building a **cloud cost optimization SaaS**, tools to help engineering teams understand and reduce their cloud spend. This comes directly from years of working on autoscaling and fleet management, where I saw firsthand how much money gets wasted on over-provisioned and poorly managed infrastructure.
+Try CCA: [www.dragonfractal.com](https://www.dragonfractal.com/) | `docker pull dragonfractal/cca`
 
 ## What I work with
 
