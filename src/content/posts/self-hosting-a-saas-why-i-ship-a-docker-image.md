@@ -31,7 +31,7 @@ If CCA only existed as a hosted service, that conversation ends with "sorry, can
 
 ## How it works
 
-The CLI runs the same detection rules as the hosted service. Same waste-pattern matching, same recommendation engine, same IAM role pattern. The difference is where the analysis happens.
+The CLI runs the same detection rules as the hosted service. Same waste-pattern matching, same recommendation engine. The difference is where the analysis happens -- and who holds the credentials.
 
 ```bash
 # Scan your account from your machine
@@ -42,7 +42,7 @@ docker pull dragonfractal/cca
 docker run dragonfractal/cca scan --regions us-east-1
 ```
 
-The CLI assumes the IAM role in your account (the same role described in my [previous post](/posts/building-a-read-only-iam-role-auditors-trust)), runs the detection rules locally, and outputs findings to the terminal. Output formats include table (default), JSON, YAML, markdown, and PDF. No data sent anywhere. No account creation required.
+The CLI uses your own AWS credentials -- the same ones in your `~/.aws/credentials` or environment variables. It calls the AWS APIs directly from your machine, runs the detection rules locally, and outputs findings to your terminal. **Dragon Fractal never sees your credentials, your IAM role, or your results.** No data is sent to any external service. No Dragon Fractal account required. Output formats include table (default), JSON, YAML, markdown, and PDF.
 
 If you're running on an EC2 instance or in an ECS task, the CLI uses the instance/task role directly. Running it on your laptop? It picks up credentials from your AWS config, environment variables, or you can point it at a specific role.
 

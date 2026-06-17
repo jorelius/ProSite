@@ -57,7 +57,7 @@ docker pull dragonfractal/cca
 docker run dragonfractal/cca scan --regions us-east-1
 ```
 
-Same detection engine, your machine. Output in table, JSON, YAML, markdown, or PDF. Billing data never leaves your network.
+Same detection engine, your machine, your AWS credentials. Dragon Fractal never sees your credentials or your results -- the CLI talks directly to AWS and outputs locally. No Dragon Fractal account required. Output in table, JSON, YAML, markdown, or PDF.
 
 ## Pricing
 

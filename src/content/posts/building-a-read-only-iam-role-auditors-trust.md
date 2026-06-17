@@ -22,16 +22,34 @@ Here's how I designed the IAM role for Cloud Cost Analyzer, and why every permis
 
 CCA reads your AWS cost and resource data to find waste. It never modifies anything. But "trust me, it's read-only" isn't good enough. Security teams and auditors want to see the actual IAM policy, verify it themselves, and confirm there's no path to escalation.
 
-This meant the role needed to be:
+This meant the IAM policy needed to be:
 
 1. **Explicitly scoped** -- only the permissions CCA actually uses, nothing more
 2. **Auditable** -- the policy is public, not hidden behind a "connect your account" button
-3. **Cross-account via AssumeRole** -- CCA never touches your credentials, just assumes a role you create in your account
-4. **No write permissions** -- not a single `Create*`, `Delete*`, `Put*`, `Update*`, or `Modify*` action
+3. **No write permissions** -- not a single `Create*`, `Delete*`, `Put*`, `Update*`, or `Modify*` action
 
-## The role architecture
+## Two auth models, one policy
 
-CCA uses the standard cross-account AssumeRole pattern:
+CCA has two ways to connect to your AWS account. The IAM permissions are identical in both cases -- the difference is who holds the credentials.
+
+### CLI (local mode): your credentials never leave your machine
+
+When you run the CLI locally, CCA uses your existing AWS credentials -- the same ones in your `~/.aws/credentials` or your environment variables. The tool runs on your machine, calls the AWS APIs directly, and outputs findings to your terminal. **Dragon Fractal never sees your credentials, your IAM role, or your scan results.** Nothing is sent to any external service. It's the same as running `aws ec2 describe-instances` yourself, except CCA knows what to look for.
+
+```
+Your Machine                        Your AWS Account
++-------------------+              +-------------------+
+| CCA CLI           | -- direct -> | AWS APIs          |
+| (your credentials)|   API calls  | (Describe/List/   |
+|                   |              |  Get only)         |
++-------------------+              +-------------------+
+
+Dragon Fractal: not involved. Zero data leaves your network.
+```
+
+### Hosted service: cross-account AssumeRole
+
+When you use the hosted service at dragonfractal.com, CCA's service account assumes a role you create in your account. You control the role, the permissions, and the trust policy. CCA calls `sts:AssumeRole`, gets temporary credentials (valid for 1 hour), and uses those to read your cost and resource data. When the session expires, access is gone.
 
 ```
 Your AWS Account                    CCA Service Account
@@ -43,9 +61,11 @@ Your AWS Account                    CCA Service Account
 +-------------------+              +-------------------+
 ```
 
-You create a role in your account with a trust policy that allows CCA's service account to assume it. CCA calls `sts:AssumeRole`, gets temporary credentials (valid for 1 hour), and uses those to read your cost and resource data. When the session expires, access is gone.
+The trust policy supports an optional `ExternalId` for confused deputy prevention and a `TrustedAccountId` for cross-account setups. You can revoke access at any time by deleting the role.
 
-CCA ships a CloudFormation template that creates this role with one deploy. The template accepts an optional `ExternalId` parameter for the confused deputy prevention, and a `TrustedAccountId` for cross-account setups.
+**The key point: if you use the CLI, Dragon Fractal has zero access to your account. If you use the hosted service, you grant access explicitly via a role you own and can revoke.** Either way, the IAM permissions are the same -- and they're read-only.
+
+CCA ships a CloudFormation template that creates this role with one deploy.
 
 ## The permission policy -- what CCA actually needs
 
