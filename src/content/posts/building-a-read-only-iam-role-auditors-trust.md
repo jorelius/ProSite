@@ -18,18 +18,11 @@ The wrong answer is "just give us AdministratorAccess and we'll figure it out." 
 
 Here's how I designed the IAM role for Cloud Cost Analyzer, and why every permission is there.
 
-## The trust problem
+## How CCA connects to your account
 
-CCA's agent runs in your environment and collects resource and cost metrics from your AWS account. Those metrics get sent to the CCA service, where 80+ detection rules identify waste and generate recommendations you can see on the dashboard.
+CCA's agent runs in your environment -- your laptop, an EC2 instance, a container in your pipeline. It uses your AWS credentials to collect resource metadata, utilization metrics, and cost data. Those credentials never leave your machine.
 
-That means two trust boundaries:
-
-1. **What can the agent read from your AWS account?** (the IAM policy)
-2. **What data leaves your environment?** (collected metrics -- not credentials)
-
-For the first boundary, security teams and auditors want to see the actual IAM policy, verify it themselves, and confirm there's no path to escalation. For the second, the critical point is: **your AWS credentials never leave your environment.** The CCA agent uses your credentials locally to collect data, then sends the collected metrics to the CCA service. The service never sees your IAM role, access keys, or session tokens.
-
-## How it works
+The agent then sends the collected metrics to the CCA service, where 89 detection rules identify waste and generate recommendations. You see the results on the CCA dashboard and in the CLI output.
 
 ```
 Your Environment                 Your AWS Account              CCA Service
@@ -41,26 +34,24 @@ Your Environment                 Your AWS Account              CCA Service
 |                |              +----------------+            |                |
 |                |                                            |                |
 |                | -- sends collected metrics ---------------> | Rules Engine   |
-|                |   (resource data, cost data,               | (80+ rules)    |
-|                |    utilization metrics)                     |                |
+|                |   (resource metadata, utilization,         | (89 rules)     |
+|                |    cost data -- NOT credentials)            |                |
 +----------------+                                            +----------------+
                                                                      |
                                                               +----------------+
                                                               | Dashboard      |
                                                               | (your findings)|
                                                               +----------------+
-
-Your credentials: never leave your environment.
-Your metrics: sent to CCA service for analysis.
 ```
 
-The CCA agent assumes or uses the IAM role you configure in your environment. It calls the AWS APIs to collect resource, cost, and utilization data, then sends that data to the CCA service for processing. The service runs the detection rules and surfaces findings on the dashboard.
+Two trust boundaries matter here:
 
-CCA ships a CloudFormation template that creates the IAM role with one deploy. The template accepts an optional `ExternalId` for confused deputy prevention and a `TrustedAccountId` for cross-account setups.
+1. **What can the agent read from your AWS account?** That's the IAM policy -- and it's what this post is about.
+2. **What data leaves your environment?** Collected metrics (resource metadata, utilization, costs). Never credentials.
 
 ## The permission policy -- what CCA actually needs
 
-CCA has 80+ detection rules spanning compute, storage, networking, databases, serverless, analytics, and more. Each rule needs specific `Describe*`, `List*`, or `Get*` permissions for the agent to collect the right data. Here's the minimum policy for basic scanning:
+CCA has 89 detection rules spanning compute, storage, networking, databases, serverless, analytics, and more. Each rule needs specific `Describe*`, `List*`, or `Get*` permissions for the agent to collect the right data. Here's the minimum policy for basic scanning:
 
 ```json
 {
@@ -92,9 +83,9 @@ CCA has 80+ detection rules spanning compute, storage, networking, databases, se
 
 That's 13 actions. It covers the core waste patterns: idle EC2 instances, unattached EBS volumes, old snapshots, orphaned Elastic IPs, idle NAT Gateways, underutilized RDS instances, and S3 bucket discovery. Combined with CloudWatch metrics, CCA can determine whether resources are actually being used or just burning money.
 
-## The full policy -- all 80+ rules
+## The full policy -- all 89 rules
 
-The full policy enables every detection rule CCA has. It's bigger -- organized by service category:
+The full policy enables every detection rule. It's about 100 actions across 30+ services, organized by category:
 
 | Category | Services | Sample Rules |
 |----------|----------|-------------|
@@ -108,7 +99,7 @@ The full policy enables every detection rule CCA has. It's bigger -- organized b
 | **Security** | Secrets Manager, ACM, KMS | Never-accessed secrets, unused certificates, idle KMS keys |
 | **Cost** | Cost Explorer | Cost data enrichment for dollar-amount estimates |
 
-Every action is a `Describe*`, `List*`, or `Get*` call. The full policy is about 100 actions across 30+ services. It's documented service-by-service so you can strip out categories you don't care about -- if you don't run SageMaker, remove the ML permissions. The minimum policy still catches the highest-value waste patterns.
+Every action is a `Describe*`, `List*`, or `Get*` call. The policy is documented service-by-service so you can strip out categories you don't need -- if you don't run SageMaker, remove the ML permissions. The minimum policy still catches the highest-value waste patterns.
 
 ## What's explicitly NOT in the policy
 

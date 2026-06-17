@@ -19,78 +19,83 @@ If you've been following along -- the [$6,000 AWS bill](/posts/the-6000-aws-bill
 
 ## How it works
 
-You sign up at [www.dragonfractal.com](https://www.dragonfractal.com/), set up the CCA agent in your environment, and point it at your AWS account. The agent collects resource, cost, and utilization metrics using your credentials (which never leave your environment), then sends the collected data to the CCA service. The service runs 80+ detection rules and surfaces findings on your dashboard with plain-English recommendations.
+1. Sign up at [www.dragonfractal.com](https://www.dragonfractal.com/) (free, no credit card)
+2. Create the read-only IAM role in your account (one-command CloudFormation deploy)
+3. Run the CCA agent in your environment
+4. The agent collects resource, cost, and utilization data using your AWS credentials (credentials stay on your machine)
+5. The agent sends collected metrics to the CCA service, which runs 89 detection rules
+6. See findings on the dashboard and in the CLI output
+
+```bash
+# Install the agent
+curl -sSL https://releases.dragonfractal.com/install.sh | sh
+
+# Or pull the Docker image
+docker pull ghcr.io/dragonfractal/cca:latest
+
+# Set up the IAM role
+cloud-cost-analyzer setup --provider aws --deploy
+
+# Run a scan
+cloud-cost-analyzer scan --api-key <your-key> --regions us-east-1
+```
 
 ## What CCA finds
 
-**Compute waste.** Idle EC2 instances running at <5% CPU. Stopped instances still paying for EBS. Previous-generation instance types costing more than their Graviton equivalents. EKS nodes running at 20% utilization.
+89 detection rules across 9 categories:
 
-**Storage waste.** Unattached EBS volumes from terminated instances. Old snapshots past any reasonable retention window. gp2 volumes that should be gp3 (same performance, 20% cheaper). S3 buckets with no lifecycle policies. Unused ECR repositories.
+**Compute.** Idle EC2 instances (<5% CPU). Stopped instances still paying for EBS. Previous-generation instance types. Graviton migration opportunities. Burstable instances exhausting CPU credits. EKS nodes at 20% utilization.
 
-**Networking waste.** Idle NAT Gateways ($32/mo each). Unattached Elastic IPs ($3.60/mo each). Load balancers with empty target groups. Idle VPN connections. Unused VPC endpoints.
+**Storage.** Unattached EBS volumes. Old snapshots (>90 days). gp2 volumes that should be gp3 (20% savings). S3 buckets with no lifecycle policies. Unused ECR repositories. Underutilized EFS and FSx.
 
-**Database waste.** Underutilized RDS instances. Over-provisioned DynamoDB tables. ElastiCache clusters with zero cache hits. Idle Redshift, Neptune, and DocumentDB clusters. Non-Graviton RDS instances. Multi-AZ on non-production databases.
+**Networking.** Idle NAT Gateways ($32-45/mo each). Unattached Elastic IPs ($3.60/mo). Load balancers with no targets ($16-27/mo). Idle VPN connections. Unused VPC endpoints ($7.20/mo per AZ). Low-throughput Transit Gateways.
 
-**Serverless, analytics, monitoring, security.** Oversized Lambda functions. Idle Step Functions and API Gateways. CloudWatch Log groups with no retention policy. SageMaker notebooks running 24/7. Never-accessed Secrets Manager secrets. Unused KMS keys.
+**Database.** Underutilized RDS (<20% CPU). Over-provisioned DynamoDB. ElastiCache clusters with zero cache hits. Idle Redshift, Neptune, and DocumentDB. Non-Graviton RDS. Multi-AZ on non-production databases (50% savings).
 
-Each finding includes:
+**Serverless.** Oversized Lambda functions (<30% memory utilization, 30-80% savings). Lambda high error rates. Idle Step Functions and API Gateways. CodePipeline pipelines that never execute.
 
-- The specific resource (ID, ARN, region, tags)
-- The estimated monthly cost
-- A plain-English explanation of why it's waste
-- The specific steps to fix it
+**Analytics.** Idle OpenSearch domains. Low-throughput Kinesis streams. Idle EMR clusters. Athena queries missing partition pruning.
 
-No 50-page PDF. No "schedule a call with our solutions team." Findings with dollar amounts and fix instructions.
+**Monitoring.** CloudWatch Log groups with no retention policy. Unused CloudWatch dashboards ($3/dashboard/mo).
 
-## Getting started
+**Security.** Secrets Manager secrets never accessed ($0.40/secret/mo). Unused ACM certificates. Idle KMS keys ($1/key/mo).
 
-1. **Sign up** at [www.dragonfractal.com](https://www.dragonfractal.com/)
-2. **Create the IAM role** -- CCA provides a CloudFormation template (one command to deploy)
-3. **Run the agent** -- directly or via Docker:
+**ML.** Idle SageMaker notebooks ($50-700/mo). SageMaker endpoints with low traffic ($100-5,000/mo).
 
-```bash
-# Direct
-cloud-cost-analyzer scan --regions us-east-1
-
-# Or via Docker
-docker pull dragonfractal/cca
-docker run dragonfractal/cca scan --regions us-east-1
-```
-
-4. **See your findings** on the CCA dashboard
-
-Your AWS credentials stay in your environment. The agent collects metrics locally and sends them to the CCA service for analysis. The service runs the rules and shows recommendations on the dashboard.
+Each finding includes the specific resource (ID, ARN, region, tags), the estimated monthly cost, a plain-English explanation, and the steps to fix it.
 
 ## Pricing
 
-| Tier | Price | What you get |
-|------|-------|-------------|
-| **Community** | Free, forever | 80+ detection rules, plain-English recommendations, dashboard. No credit card. |
-| **Pro** | $99/mo | Everything in Community + historical trends, alerts when new waste appears, email reports. |
-| **Enterprise** | $499/mo | Everything in Pro + team access controls, SSO, multi-account management. |
+| Tier | Monthly | Yearly | What you get |
+|------|---------|--------|-------------|
+| **Community** | Free forever | Free forever | Executive summary, savings totals, finding categories. 20 core rules. No credit card. |
+| **Pro** | $99/mo | $990/yr | All 89 rules, full findings with resource IDs and recommendations, historical trends, alerts, PDF/JSON export. |
+| **Enterprise** | $499/mo | $4,990/yr | Everything in Pro + team access controls, SSO, multi-account management. |
 
-Yearly subscriptions available at a discount.
+The Community tier gives you the executive summary on every scan -- total savings potential, severity breakdown, optimization score, and finding categories with estimated savings. You can see how much you're wasting and in what categories. To see the specific resource IDs and fix-it recommendations, that's Pro.
 
-The Community tier is a real product, not a crippled demo with a "upgrade to see your results" wall. You get every detection rule, every finding category, and plain-English recommendations. If Community is all you need, use it forever. I'd rather have 1,000 teams finding waste with the free tier than 10 teams on Enterprise.
+Here's the thing: even the Community tier executive summary is worth more than what most people get from Cost Explorer. If you scan your account and CCA tells you there's $800/month in waste across 12 idle resources, 8 storage orphans, and 3 networking issues -- that's enough signal to go hunting manually. Pro just makes the hunting automatic.
 
-Pro and Enterprise exist for teams that want the workflow around the findings -- alerts so you catch new waste before it runs for three months, history so you can show your CFO the savings trend, team features so the whole engineering org has visibility.
+## For regulated environments: air-gapped mode
+
+Some teams can't send data to an external service. CCA supports an air-gapped mode where all 89 rules run locally on your machine with a license file. No data leaves your environment. Same rules, same recommendations, fully offline.
 
 ## What's next
 
-CCA currently covers AWS with 80+ detection rules across compute, storage, networking, databases, serverless, analytics, monitoring, and security. The roadmap includes:
+CCA currently covers AWS with 89 detection rules. The roadmap includes:
 
-- **More detection rules** -- reserved instance coverage gaps, savings plan optimization, S3 intelligent tiering analysis
+- **More rules** -- reserved instance coverage gaps, savings plan optimization, S3 intelligent tiering
 - **Azure support** -- same detection patterns, different cloud (coming soon)
 - **GCP support** -- planned after Azure
 
-Each new detection rule takes effect immediately for all customers -- the rules run server-side, so your agent doesn't need an update when new rules ship.
+New rules take effect immediately for all users in managed mode -- the rules run server-side, so your agent doesn't need an update when new rules ship.
 
 ## The short version
 
-I spent a year consulting on AWS bills. The same waste patterns showed up in every account. I automated finding them. That collection of rules is now Cloud Cost Analyzer -- 80+ detection rules, built in Rust, with an agent that runs in your environment and a dashboard that shows you exactly where you're wasting money.
+I spent a year consulting on AWS bills. The same waste patterns showed up in every account. I automated finding them. That collection of rules is now Cloud Cost Analyzer -- 89 detection rules, built in Rust, with an agent that runs in your environment and a dashboard that shows you exactly where you're wasting money.
 
 Sign up: [www.dragonfractal.com](https://www.dragonfractal.com/)
 
-Pull the agent: `docker pull dragonfractal/cca`
+Pull the agent: `docker pull ghcr.io/dragonfractal/cca:latest`
 
 Community tier: free, forever, no credit card.
