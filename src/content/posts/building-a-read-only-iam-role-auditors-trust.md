@@ -20,56 +20,47 @@ Here's how I designed the IAM role for Cloud Cost Analyzer, and why every permis
 
 ## The trust problem
 
-CCA reads your AWS cost and resource data to find waste. It never modifies anything. But "trust me, it's read-only" isn't good enough. Security teams and auditors want to see the actual IAM policy, verify it themselves, and confirm there's no path to escalation.
+CCA's agent runs in your environment and collects resource and cost metrics from your AWS account. Those metrics get sent to the CCA service, where 80+ detection rules identify waste and generate recommendations you can see on the dashboard.
 
-This meant the IAM policy needed to be:
+That means two trust boundaries:
 
-1. **Explicitly scoped** -- only the permissions CCA actually uses, nothing more
-2. **Auditable** -- the policy is public, not hidden behind a "connect your account" button
-3. **No write permissions** -- not a single `Create*`, `Delete*`, `Put*`, `Update*`, or `Modify*` action
+1. **What can the agent read from your AWS account?** (the IAM policy)
+2. **What data leaves your environment?** (collected metrics -- not credentials)
 
-## Two auth models, one policy
+For the first boundary, security teams and auditors want to see the actual IAM policy, verify it themselves, and confirm there's no path to escalation. For the second, the critical point is: **your AWS credentials never leave your environment.** The CCA agent uses your credentials locally to collect data, then sends the collected metrics to the CCA service. The service never sees your IAM role, access keys, or session tokens.
 
-CCA has two ways to connect to your AWS account. The IAM permissions are identical in both cases -- the difference is who holds the credentials.
-
-### CLI (local mode): your credentials never leave your machine
-
-When you run the CLI locally, CCA uses your existing AWS credentials -- the same ones in your `~/.aws/credentials` or your environment variables. The tool runs on your machine, calls the AWS APIs directly, and outputs findings to your terminal. **Dragon Fractal never sees your credentials, your IAM role, or your scan results.** Nothing is sent to any external service. It's the same as running `aws ec2 describe-instances` yourself, except CCA knows what to look for.
+## How it works
 
 ```
-Your Machine                        Your AWS Account
-+-------------------+              +-------------------+
-| CCA CLI           | -- direct -> | AWS APIs          |
-| (your credentials)|   API calls  | (Describe/List/   |
-|                   |              |  Get only)         |
-+-------------------+              +-------------------+
+Your Environment                 Your AWS Account              CCA Service
++----------------+              +----------------+            +----------------+
+| CCA Agent      | -- direct -> | AWS APIs       |            |                |
+| (your machine) |   API calls  | (Describe/List)|            |                |
+|                |   using YOUR |                |            |                |
+|                |   credentials|                |            |                |
+|                |              +----------------+            |                |
+|                |                                            |                |
+|                | -- sends collected metrics ---------------> | Rules Engine   |
+|                |   (resource data, cost data,               | (80+ rules)    |
+|                |    utilization metrics)                     |                |
++----------------+                                            +----------------+
+                                                                     |
+                                                              +----------------+
+                                                              | Dashboard      |
+                                                              | (your findings)|
+                                                              +----------------+
 
-Dragon Fractal: not involved. Zero data leaves your network.
+Your credentials: never leave your environment.
+Your metrics: sent to CCA service for analysis.
 ```
 
-### Hosted service: cross-account AssumeRole
+The CCA agent assumes or uses the IAM role you configure in your environment. It calls the AWS APIs to collect resource, cost, and utilization data, then sends that data to the CCA service for processing. The service runs the detection rules and surfaces findings on the dashboard.
 
-When you use the hosted service at dragonfractal.com, CCA's service account assumes a role you create in your account. You control the role, the permissions, and the trust policy. CCA calls `sts:AssumeRole`, gets temporary credentials (valid for 1 hour), and uses those to read your cost and resource data. When the session expires, access is gone.
-
-```
-Your AWS Account                    CCA Service Account
-+-------------------+              +-------------------+
-|                   |              |                   |
-| CCA-ReadOnly-Role | <-- STS --> | CCA Service Role  |
-| (you create this) | AssumeRole  | (we control this) |
-|                   |              |                   |
-+-------------------+              +-------------------+
-```
-
-The trust policy supports an optional `ExternalId` for confused deputy prevention and a `TrustedAccountId` for cross-account setups. You can revoke access at any time by deleting the role.
-
-**The key point: if you use the CLI, Dragon Fractal has zero access to your account. If you use the hosted service, you grant access explicitly via a role you own and can revoke.** Either way, the IAM permissions are the same -- and they're read-only.
-
-CCA ships a CloudFormation template that creates this role with one deploy.
+CCA ships a CloudFormation template that creates the IAM role with one deploy. The template accepts an optional `ExternalId` for confused deputy prevention and a `TrustedAccountId` for cross-account setups.
 
 ## The permission policy -- what CCA actually needs
 
-CCA has 80+ detection rules spanning compute, storage, networking, databases, serverless, analytics, and more. Each rule needs specific `Describe*`, `List*`, or `Get*` permissions. Here's the minimum policy for basic scanning:
+CCA has 80+ detection rules spanning compute, storage, networking, databases, serverless, analytics, and more. Each rule needs specific `Describe*`, `List*`, or `Get*` permissions for the agent to collect the right data. Here's the minimum policy for basic scanning:
 
 ```json
 {

@@ -70,7 +70,7 @@ An Elastic IP attached to a running instance is free. An Elastic IP sitting unat
 
 ## What I built instead
 
-Cloud Cost Analyzer connects to your account via a read-only IAM role, pulls the data that Cost Explorer aggregates away, and groups it by waste pattern instead of by service. Instead of "EC2-Other: $400" you get:
+Cloud Cost Analyzer's agent collects the data that Cost Explorer aggregates away using a read-only IAM role, sends it to the CCA service, and the dashboard groups findings by waste pattern instead of by service. Instead of "EC2-Other: $400" you get:
 
 - 3 idle NAT Gateways: $96/month -- here are the IDs, here's which VPCs they're in
 - 14 unattached EBS volumes: $140/month -- here are the volume IDs, here's when the attached instance was terminated

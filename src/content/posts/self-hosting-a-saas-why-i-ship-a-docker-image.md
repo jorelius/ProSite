@@ -1,8 +1,8 @@
 ---
-title: "Why I Ship a CLI Alongside the Service"
+title: "Why I Ship an Agent You Run in Your Environment"
 date: "2026-05-05T10:00:00.000Z"
 draft: false
-slug: "why-i-ship-a-cli-alongside-the-service"
+slug: "why-i-ship-an-agent-you-run-in-your-environment"
 category: "Cloud Cost"
 tags:
   - "Docker"
@@ -10,31 +10,40 @@ tags:
   - "Architecture"
   - "CCA"
   - "Dragon Fractal"
-description: "Cloud Cost Analyzer is a hosted service. It's also a CLI you can run locally. Here's why I ship both."
+description: "Cloud Cost Analyzer's agent runs in your environment, collects metrics with your credentials, and sends them to the CCA service for analysis. Here's why I designed it this way."
 ---
 
-Cloud Cost Analyzer is a hosted service. You sign up, connect your AWS account, and CCA finds your waste. Standard model.
+Cloud Cost Analyzer has two parts: an agent that runs in your environment, and a service that processes the data.
 
-It's also a CLI tool. Run it directly or pull the Docker image, point it at your AWS account, and your billing data never leaves your machine.
+The agent collects resource and cost metrics from your AWS account using your credentials. It sends those metrics to the CCA service, where 80+ detection rules identify waste and generate recommendations. You see the results on the CCA dashboard.
 
-Shipping both adds real engineering complexity. Here's why I do it anyway.
+I could have built CCA as a fully hosted service that assumes a role in your account and pulls data directly. Some competitors work that way. Here's why I went with the agent model instead.
 
-## The data sensitivity problem
+## Credentials never leave your environment
 
-CCA reads your AWS cost data. That data tells a story about your infrastructure: what services you use, how much traffic you handle, what regions you operate in, how your spending trends over time. For some teams, that's sensitive enough that sending it to a third-party service is a non-starter.
+This is the big one. The CCA agent runs on your machine, your EC2 instance, or your container. It uses your AWS credentials to call `Describe*`, `List*`, and `Get*` APIs. The credentials -- access keys, session tokens, role ARNs -- stay in your environment. Dragon Fractal never sees them.
 
-I've had this conversation three times during early user research:
+What does leave your environment: the collected metrics. Resource metadata, utilization data, cost figures. This is what the CCA service needs to run the detection rules. It's sensitive data (it tells a story about your infrastructure), but it's not credentials. You can't use it to access your account.
 
-> "The tool looks useful, but our security policy doesn't allow billing data to leave our network."
+```
+Your Environment                    CCA Service
++--------------------+             +--------------------+
+| CCA Agent          |             | Rules Engine       |
+| - uses YOUR creds  | -- sends -> | - 80+ rules        |
+| - calls AWS APIs   |   metrics   | - recommendations  |
+| - credentials stay  |             | - dashboard        |
+|   here             |             |                    |
++--------------------+             +--------------------+
+```
 
-If CCA only existed as a hosted service, that conversation ends with "sorry, can't help you." With a CLI, the answer is "run it locally -- same detection engine, your machine, your data stays put."
+Compare this to the alternative: a hosted service that holds a cross-account role with access to your AWS account 24/7. With the agent model, nothing in Dragon Fractal's infrastructure can call your AWS APIs. If CCA's service were compromised tomorrow, attackers would have collected metrics -- not access to your account.
 
-## How it works
+## How to run it
 
-The CLI runs the same detection rules as the hosted service. Same waste-pattern matching, same recommendation engine. The difference is where the analysis happens -- and who holds the credentials.
+The agent is a single binary or a Docker image. Run it however fits your environment:
 
 ```bash
-# Scan your account from your machine
+# Run directly
 cloud-cost-analyzer scan --regions us-east-1
 
 # Or via Docker
@@ -42,68 +51,39 @@ docker pull dragonfractal/cca
 docker run dragonfractal/cca scan --regions us-east-1
 ```
 
-The CLI uses your own AWS credentials -- the same ones in your `~/.aws/credentials` or environment variables. It calls the AWS APIs directly from your machine, runs the detection rules locally, and outputs findings to your terminal. **Dragon Fractal never sees your credentials, your IAM role, or your results.** No data is sent to any external service. No Dragon Fractal account required. Output formats include table (default), JSON, YAML, markdown, and PDF.
+If you're running on EC2 or ECS, the agent uses the instance/task role directly. On your laptop, it picks up credentials from your AWS config or environment variables. In CI/CD, pull the Docker image and let the runner's IAM role handle auth.
 
-If you're running on an EC2 instance or in an ECS task, the CLI uses the instance/task role directly. Running it on your laptop? It picks up credentials from your AWS config, environment variables, or you can point it at a specific role.
-
-For a deeper analysis, the `audit` command generates a comprehensive infrastructure report:
-
-```bash
-cloud-cost-analyzer audit --regions us-east-1,us-west-2 --output markdown -f report.md
-```
-
-And if you want to separate data collection from analysis (useful for air-gapped environments), you can dump the raw data and generate reports offline:
-
-```bash
-# Collect data (requires AWS access)
-cloud-cost-analyzer scan --regions us-east-1 --dump raw-data.json
-
-# Generate report later (no AWS access needed)
-cloud-cost-analyzer report raw-data.json --output pdf -f findings.pdf
-```
-
-## The engineering tradeoff
-
-Shipping a CLI means the core detection engine can't depend on anything that only exists in the hosted infrastructure. No proprietary message queues. No managed database for intermediate state. No service-to-service calls during analysis.
-
-This constraint is actually useful. It forces a clean separation between the detection engine (80+ waste-pattern rules, resource discovery, recommendation generation) and the platform (auth, billing, dashboards, multi-tenancy, history). The hosted service wraps the detection engine with the platform layer. The CLI ships the detection engine directly.
-
-The tradeoff is that some features only make sense in the hosted service:
-
-| Feature | CLI | Hosted Service |
-|---------|-----|---------------|
-| Waste detection (80+ rules) | Yes | Yes |
-| Plain-English recommendations | Yes | Yes |
-| Multiple output formats (table, JSON, YAML, markdown, PDF) | Yes | Yes |
-| Offline report generation | Yes | Yes |
-| Historical trends | No | Pro tier |
-| Alerts on new waste | No | Pro tier |
-| Team access controls | No | Enterprise tier |
-| Dashboard UI | No (terminal output) | Yes |
-
-This is honest. The CLI is the Community tier -- fully functional for finding and fixing waste right now, but it's a point-in-time scan with terminal output. If you want a dashboard, historical trends, and alerts when a new idle NAT Gateway shows up next month, that's the hosted service.
+The agent collects data, sends it to the CCA service, and the results show up on your dashboard. No manual export/import. No copying files around.
 
 ## Why Docker?
 
-The CLI is a single binary. You can download it and run it directly. So why also ship a Docker image?
+The agent is a single Rust binary. You can download it and run it directly. So why also ship a Docker image?
 
 Two reasons:
 
-1. **CI/CD integration.** Teams that want to run CCA as a scheduled job in their pipeline don't want to manage binary versions and OS compatibility. `docker pull dragonfractal/cca` works the same in GitHub Actions, GitLab CI, Jenkins, and any other runner that supports containers.
+1. **CI/CD integration.** Teams that want to run the agent on a schedule in their pipeline don't want to manage binary versions and OS compatibility. `docker pull dragonfractal/cca` works the same in GitHub Actions, GitLab CI, Jenkins, and any other runner that supports containers.
 
 2. **No install friction.** Some engineers can't (or won't) install arbitrary binaries on their work machines. Docker is already approved in most environments. Pulling an image and running it in a container is a lower trust bar than downloading and executing a binary.
 
-## The business case
+## The engineering tradeoff
 
-CLI users on the Community tier don't pay me anything. So why spend engineering time supporting them?
+The agent model means CCA's collection layer has to be lightweight, reliable, and work across different environments. It can't assume a specific OS, container runtime, or network configuration. The agent needs to handle credential discovery, API pagination, rate limiting, and data serialization -- then ship the results reliably to the CCA service.
 
-Three reasons:
+The upside is a clean separation of concerns: the agent knows how to collect data, the service knows how to analyze it. The agent is simple enough to audit (it makes read-only AWS API calls and sends the results over HTTPS). The rules engine, dashboard, and recommendation logic live server-side where I can update them without requiring agent upgrades for every new detection rule.
 
-1. **Top of funnel.** Someone who runs the CLI and finds $500/month in waste becomes a champion for CCA inside their organization. When their team needs a dashboard, alerts, and history, they already trust the detection engine.
+This also means new rules take effect immediately for all customers. When I add a detection rule for, say, idle SageMaker endpoints, the next time your agent sends data, the service applies the new rule automatically. No agent update needed.
 
-2. **Security-conscious orgs are the best customers.** The companies that won't send billing data to a SaaS are often the ones with the biggest cloud bills. If I can earn their trust with a local CLI, the hosted service conversation happens naturally once they see the value.
+## The trust model
 
-3. **It keeps me honest.** If the CLI finds the same waste for free, the hosted service has to be meaningfully better to justify the price. Dashboard, history, alerts, team features -- that's the value of the platform, and it has to stand on its own.
+I want to be explicit about what CCA sees and doesn't see:
+
+| Data | Where it lives |
+|------|---------------|
+| Your AWS credentials (access keys, role ARN, session tokens) | Your environment only. Never sent to Dragon Fractal. |
+| Collected metrics (resource metadata, utilization, costs) | Sent to CCA service over HTTPS. Stored for analysis and history. |
+| Detection results and recommendations | CCA service and dashboard. |
+
+If you're evaluating CCA: the IAM policy is [public and documented](/posts/building-a-read-only-iam-role-auditors-trust). The agent is a single binary you can monitor with any network inspection tool. Every outbound call goes to either AWS APIs (data collection) or the CCA service endpoint (metric delivery). No other destinations.
 
 Try it:
 
