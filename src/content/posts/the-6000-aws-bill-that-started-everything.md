@@ -43,6 +43,8 @@ After the fourth engagement I realized I was doing the same detective work each 
 
 So I started automating it. That automation became Cloud Cost Analyzer. That side project became Dragon Fractal.
 
-The first version was a Python script that assumed an IAM role, pulled CUR data, and spit out a markdown report. Ugly, but it found $800/month in waste in the first account I pointed it at. That was enough signal to keep going.
+The first version was me manually compiling graphs and metrics, then analyzing them against rules and best practices I'd learned from years of running services on cloud infrastructure. It worked, but it took days per account. I kept thinking: every check I'm doing is repeatable. Every rule I'm applying is codifiable. Why am I doing this by hand?
+
+So I started writing detection rules. One for idle NAT Gateways. One for unattached EBS volumes. One for CloudWatch log groups with no retention policy. Each rule takes a piece of what I was doing manually and makes it automatic. That collection of rules became Cloud Cost Analyzer, and the project became Dragon Fractal.
 
 More on the technical details in upcoming posts. For now: if you've ever looked at an AWS bill and thought "this seems high but I don't know where to start" -- that's exactly the problem I'm building for.

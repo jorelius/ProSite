@@ -27,7 +27,7 @@ This meant the role needed to be:
 1. **Explicitly scoped** -- only the permissions CCA actually uses, nothing more
 2. **Auditable** -- the policy is public, not hidden behind a "connect your account" button
 3. **Cross-account via AssumeRole** -- CCA never touches your credentials, just assumes a role you create in your account
-4. **No write permissions** -- not even `s3:PutObject` for "temporary storage" or `logs:CreateLogGroup` for "diagnostics"
+4. **No write permissions** -- not a single `Create*`, `Delete*`, `Put*`, `Update*`, or `Modify*` action
 
 ## The role architecture
 
@@ -43,77 +43,35 @@ Your AWS Account                    CCA Service Account
 +-------------------+              +-------------------+
 ```
 
-You create a role in your account with a trust policy that allows CCA's service account to assume it. CCA calls `sts:AssumeRole`, gets temporary credentials (valid for 1 hour), and uses those to read your cost data. When the session expires, access is gone.
+You create a role in your account with a trust policy that allows CCA's service account to assume it. CCA calls `sts:AssumeRole`, gets temporary credentials (valid for 1 hour), and uses those to read your cost and resource data. When the session expires, access is gone.
 
-The trust policy looks like this:
+CCA ships a CloudFormation template that creates this role with one deploy. The template accepts an optional `ExternalId` parameter for the confused deputy prevention, and a `TrustedAccountId` for cross-account setups.
 
-```json
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Principal": {
-        "AWS": "arn:aws:iam::root"
-      },
-      "Action": "sts:AssumeRole",
-      "Condition": {
-        "StringEquals": {
-          "sts:ExternalId": "<your-unique-external-id>"
-        }
-      }
-    }
-  ]
-}
-```
+## The permission policy -- what CCA actually needs
 
-The `ExternalId` condition prevents the confused deputy problem -- another AWS customer can't trick CCA into assuming your role because they don't know your external ID.
-
-## The permission policy
-
-Here's what CCA actually needs, and why:
+CCA has 80+ detection rules spanning compute, storage, networking, databases, serverless, analytics, and more. Each rule needs specific `Describe*`, `List*`, or `Get*` permissions. Here's the minimum policy for basic scanning:
 
 ```json
 {
   "Version": "2012-10-17",
   "Statement": [
     {
-      "Sid": "CostAndBillingRead",
+      "Sid": "CloudCostAnalyzerMinimum",
       "Effect": "Allow",
       "Action": [
-        "ce:GetCostAndUsage",
-        "ce:GetCostForecast",
-        "cur:DescribeReportDefinitions"
-      ],
-      "Resource": "*"
-    },
-    {
-      "Sid": "ResourceDiscovery",
-      "Effect": "Allow",
-      "Action": [
-        "ec2:DescribeNatGateways",
+        "sts:GetCallerIdentity",
+        "ec2:DescribeRegions",
+        "ec2:DescribeInstances",
         "ec2:DescribeVolumes",
+        "ec2:DescribeSnapshots",
         "ec2:DescribeAddresses",
+        "ec2:DescribeNatGateways",
         "ec2:DescribeNetworkInterfaces",
-        "elasticloadbalancing:DescribeLoadBalancers",
-        "elasticloadbalancing:DescribeTargetGroups",
-        "elasticloadbalancing:DescribeTargetHealth"
-      ],
-      "Resource": "*"
-    },
-    {
-      "Sid": "LogGroupDiscovery",
-      "Effect": "Allow",
-      "Action": [
-        "logs:DescribeLogGroups"
-      ],
-      "Resource": "*"
-    },
-    {
-      "Sid": "TagRead",
-      "Effect": "Allow",
-      "Action": [
-        "tag:GetResources"
+        "rds:DescribeDBInstances",
+        "s3:ListAllMyBuckets",
+        "s3:GetBucketLocation",
+        "cloudwatch:GetMetricStatistics",
+        "cloudwatch:ListMetrics"
       ],
       "Resource": "*"
     }
@@ -121,32 +79,58 @@ Here's what CCA actually needs, and why:
 }
 ```
 
-Let me walk through each statement.
+That's 13 actions. It covers the core waste patterns: idle EC2 instances, unattached EBS volumes, old snapshots, orphaned Elastic IPs, idle NAT Gateways, underutilized RDS instances, and S3 bucket discovery. Combined with CloudWatch metrics, CCA can determine whether resources are actually being used or just burning money.
 
-**CostAndBillingRead**: `ce:GetCostAndUsage` pulls the cost data grouped by usage type and resource. `ce:GetCostForecast` provides the trend line. `cur:DescribeReportDefinitions` checks if you have a CUR set up (if not, CCA tells you how to enable it for deeper analysis).
+## The full policy -- all 80+ rules
 
-**ResourceDiscovery**: These are all `Describe*` actions -- read-only by definition. `DescribeVolumes` lets CCA find unattached EBS volumes (status = available). `DescribeNatGateways` finds idle NAT Gateways. `DescribeAddresses` finds unattached Elastic IPs. The ELB actions check for load balancers with empty target groups.
+The full policy enables every detection rule CCA has. It's bigger -- organized by service category:
 
-**LogGroupDiscovery**: `logs:DescribeLogGroups` returns metadata including retention settings. CCA flags log groups with no retention policy or retention set to "Never expire."
+| Category | Services | Sample Rules |
+|----------|----------|-------------|
+| **Compute** | EC2, ECS, EKS, Auto Scaling | Idle VMs, stopped instances, Graviton migration, burstable overuse |
+| **Storage** | EBS, S3, EFS, FSx, ECR | Unattached volumes, old snapshots, gp2-to-gp3, storage class optimization |
+| **Database** | RDS, DynamoDB, ElastiCache, Redshift, Neptune, DocumentDB | Underutilized RDS, over-provisioned DynamoDB, zero-hit caches |
+| **Networking** | VPC, ELB, Route 53, CloudFront, Direct Connect | Idle NAT Gateways, unused EIPs, idle load balancers, VPN connections |
+| **Serverless** | Lambda, Step Functions, API Gateway, AppSync | Oversized Lambda, high error rates, idle APIs |
+| **Analytics** | OpenSearch, Kinesis, EMR, Glue | Idle clusters, low-throughput streams |
+| **Monitoring** | CloudWatch Logs, Dashboards | Missing retention policies, unused dashboards |
+| **Security** | Secrets Manager, ACM, KMS | Never-accessed secrets, unused certificates, idle KMS keys |
+| **Cost** | Cost Explorer | Cost data enrichment for dollar-amount estimates |
 
-**TagRead**: `tag:GetResources` lets CCA correlate resources with their tags, so findings can include context like "this unattached volume was tagged `env:dev, team:backend`."
+Every action is a `Describe*`, `List*`, or `Get*` call. The full policy is about 100 actions across 30+ services. It's documented service-by-service so you can strip out categories you don't care about -- if you don't run SageMaker, remove the ML permissions. The minimum policy still catches the highest-value waste patterns.
 
-## What's not in the policy
+## What's explicitly NOT in the policy
 
-No `s3:*` actions. CCA doesn't read your S3 buckets.
+CCA never requests:
 
-No `iam:*` actions. CCA doesn't enumerate your users, roles, or policies.
+- **`s3:GetObject`** -- CCA lists your buckets and checks lifecycle policies, but never reads objects inside them
+- **`secretsmanager:GetSecretValue`** -- CCA checks if secrets exist and when they were last accessed, but never reads secret values
+- **`dynamodb:GetItem`** -- CCA checks table provisioning, not your data
+- **`iam:*` (almost)** -- the only IAM action is `iam:SimulatePrincipalPolicy` for optional permission validation. No user, role, or policy enumeration
+- **Any write action** -- zero `Create*`, `Delete*`, `Put*`, `Update*`, or `Modify*` permissions across the entire policy
 
-No `lambda:*`, `ecs:*`, `rds:*` in the initial version. These will come as CCA adds detection rules for those services, and each one will be a specific `Describe*` action, not a wildcard.
-
-No write actions of any kind. Zero `Create*`, `Delete*`, `Put*`, `Update*`, or `Modify*` permissions.
-
-## Why this matters more than features
+## Why not just use ReadOnlyAccess?
 
 I could have shipped faster with `ReadOnlyAccess` -- the AWS managed policy that grants read access to almost everything. It's a single line to attach and it covers all the APIs CCA needs.
 
-But `ReadOnlyAccess` also grants `s3:GetObject` (read any file in any bucket), `secretsmanager:GetSecretValue` (read your secrets), `dynamodb:GetItem` (read your database), and hundreds of other permissions CCA has no business having.
+But `ReadOnlyAccess` also grants `s3:GetObject` (read any file in any bucket), `secretsmanager:GetSecretValue` (read your secrets), `dynamodb:GetItem` (read your database rows), and hundreds of other permissions CCA has no business having.
 
-When an engineer evaluates CCA, the first thing they'll look at is the IAM policy. If it says `ReadOnlyAccess`, the conversation is over for anyone who takes security seriously. If it says exactly the 13 actions listed above -- all `Describe*`, `Get*` on cost data, and nothing else -- that's a conversation that continues.
+When an engineer evaluates CCA, the first thing they'll look at is the IAM policy. If it says `ReadOnlyAccess`, the conversation is over for anyone who takes security seriously. If the policy is explicitly scoped to the exact `Describe*` and `List*` actions the tool needs -- and nothing else -- that's a conversation that continues.
+
+## One-command setup
+
+The CloudFormation template handles everything:
+
+```bash
+cloud-cost-analyzer setup --provider aws --deploy
+```
+
+This deploys the stack, creates the role with the full policy, and outputs the role ARN. For cross-account setups, add `--external-id` and `--trusted-account-id`. For teams that prefer to review the template first:
+
+```bash
+cloud-cost-analyzer setup --provider aws --output-template
+```
+
+This prints the CloudFormation YAML to stdout so your security team can audit it before deployment.
 
 Security isn't a feature you add later. It's the reason someone does or doesn't connect their account in the first five minutes.

@@ -31,36 +31,51 @@ If CCA only existed as a hosted service, that conversation ends with "sorry, can
 
 ## How it works
 
-The CLI runs the same detection logic as the hosted service. Same waste-pattern rules, same recommendation engine, same IAM role pattern. The difference is where the analysis happens.
+The CLI runs the same detection rules as the hosted service. Same waste-pattern matching, same recommendation engine, same IAM role pattern. The difference is where the analysis happens.
 
 ```bash
-# Run directly
-cca analyze --role-arn arn:aws:iam::role/CCA-ReadOnly
+# Scan your account from your machine
+cloud-cost-analyzer scan --regions us-east-1
 
 # Or via Docker
 docker pull dragonfractal/cca
-docker run \
-  -e CCA_ROLE_ARN=arn:aws:iam::role/CCA-ReadOnly \
-  dragonfractal/cca analyze
+docker run dragonfractal/cca scan --regions us-east-1
 ```
 
-The CLI assumes the read-only IAM role in the customer's account (the same role described in my [previous post](/posts/building-a-read-only-iam-role-auditors-trust)), runs the detection rules locally, and outputs findings to the terminal. No data sent anywhere. No account creation required.
+The CLI assumes the IAM role in your account (the same role described in my [previous post](/posts/building-a-read-only-iam-role-auditors-trust)), runs the detection rules locally, and outputs findings to the terminal. Output formats include table (default), JSON, YAML, markdown, and PDF. No data sent anywhere. No account creation required.
 
-If you're running on an EC2 instance or in an ECS task, the CLI can use the instance/task role directly. Running it on your laptop? Pass credentials via environment variables or your AWS config.
+If you're running on an EC2 instance or in an ECS task, the CLI uses the instance/task role directly. Running it on your laptop? It picks up credentials from your AWS config, environment variables, or you can point it at a specific role.
+
+For a deeper analysis, the `audit` command generates a comprehensive infrastructure report:
+
+```bash
+cloud-cost-analyzer audit --regions us-east-1,us-west-2 --output markdown -f report.md
+```
+
+And if you want to separate data collection from analysis (useful for air-gapped environments), you can dump the raw data and generate reports offline:
+
+```bash
+# Collect data (requires AWS access)
+cloud-cost-analyzer scan --regions us-east-1 --dump raw-data.json
+
+# Generate report later (no AWS access needed)
+cloud-cost-analyzer report raw-data.json --output pdf -f findings.pdf
+```
 
 ## The engineering tradeoff
 
 Shipping a CLI means the core detection engine can't depend on anything that only exists in the hosted infrastructure. No proprietary message queues. No managed database for intermediate state. No service-to-service calls during analysis.
 
-This constraint is actually useful. It forces a clean separation between the detection engine (waste pattern rules, IAM role management, recommendation generation) and the platform (auth, billing, dashboards, multi-tenancy, history). The hosted service wraps the detection engine with the platform layer. The CLI ships the detection engine only.
+This constraint is actually useful. It forces a clean separation between the detection engine (80+ waste-pattern rules, resource discovery, recommendation generation) and the platform (auth, billing, dashboards, multi-tenancy, history). The hosted service wraps the detection engine with the platform layer. The CLI ships the detection engine directly.
 
 The tradeoff is that some features only make sense in the hosted service:
 
 | Feature | CLI | Hosted Service |
 |---------|-----|---------------|
-| Waste detection | Yes | Yes |
+| Waste detection (80+ rules) | Yes | Yes |
 | Plain-English recommendations | Yes | Yes |
-| Read-only IAM role | Yes | Yes |
+| Multiple output formats (table, JSON, YAML, markdown, PDF) | Yes | Yes |
+| Offline report generation | Yes | Yes |
 | Historical trends | No | Pro tier |
 | Alerts on new waste | No | Pro tier |
 | Team access controls | No | Enterprise tier |

@@ -19,72 +19,71 @@ If you've been following along -- the [$6,000 AWS bill](/posts/the-6000-aws-bill
 
 ## What CCA does
 
-CCA connects to your AWS account via a read-only IAM role and finds the waste that Cost Explorer buries in aggregated categories. Specifically:
+CCA connects to your AWS account via a read-only IAM role and runs 80+ detection rules that find the waste Cost Explorer buries in aggregated categories.
 
-**Idle networking resources.** NAT Gateways with no meaningful traffic ($32/mo each). Elastic IPs not attached to running instances ($3.60/mo each). Load balancers with empty target groups.
+**Compute waste.** Idle EC2 instances running at <5% CPU. Stopped instances still paying for EBS. Previous-generation instance types costing more than their Graviton equivalents. EKS nodes running at 20% utilization.
 
-**Orphaned storage.** Unattached EBS volumes from terminated instances. Old EBS snapshots past any reasonable retention window. These add up quietly -- I've seen accounts with $200+/month in storage that serves no purpose.
+**Storage waste.** Unattached EBS volumes from terminated instances. Old snapshots past any reasonable retention window. gp2 volumes that should be gp3 (same performance, 20% cheaper). S3 buckets with no lifecycle policies. Unused ECR repositories.
 
-**Log overspend.** CloudWatch Log groups with no retention policy, accruing $0.03/GB/month in storage forever. Log groups with high ingestion ($0.50/GB) that nobody queries.
+**Networking waste.** Idle NAT Gateways ($32/mo each). Unattached Elastic IPs ($3.60/mo each). Load balancers with empty target groups. Idle VPN connections. Unused VPC endpoints.
 
-**Cross-AZ data transfer.** The invisible cost -- $0.01/GB between availability zones, buried in Cost Explorer's "Data Transfer" category alongside internet egress. CCA quantifies the cross-AZ portion separately so you can see whether co-locating services would save money.
+**Database waste.** Underutilized RDS instances. Over-provisioned DynamoDB tables. ElastiCache clusters with zero cache hits. Idle Redshift, Neptune, and DocumentDB clusters. Non-Graviton RDS instances. Multi-AZ on non-production databases.
+
+**Serverless, analytics, monitoring, security.** Oversized Lambda functions. Idle Step Functions and API Gateways. CloudWatch Log groups with no retention policy. SageMaker notebooks running 24/7. Never-accessed Secrets Manager secrets. Unused KMS keys.
 
 Each finding includes:
 
 - The specific resource (ID, ARN, region, tags)
 - The estimated monthly cost
 - A plain-English explanation of why it's waste
-- The exact AWS console steps to fix it
+- The specific steps to fix it
 
 No 50-page PDF. No "schedule a call with our solutions team." Findings with dollar amounts and fix instructions.
 
 ## How to try it
 
-### Option A: Hosted version
+### Option A: Hosted service
 
-Sign up at [www.dragonfractal.com](https://www.dragonfractal.com/). Create the read-only IAM role in your account (CCA provides a CloudFormation template that does this in one click). Connect your account. See findings within minutes.
+Sign up at [www.dragonfractal.com](https://www.dragonfractal.com/). Create the read-only IAM role (CCA provides a CloudFormation template -- one command to deploy). Connect your account. See findings in the dashboard.
 
 ### Option B: CLI (run locally)
 
 ```bash
 # Direct
-cca analyze --role-arn arn:aws:iam::role/CCA-ReadOnly
+cloud-cost-analyzer scan --regions us-east-1
 
 # Or via Docker
 docker pull dragonfractal/cca
-docker run \
-  -e CCA_ROLE_ARN=arn:aws:iam::role/CCA-ReadOnly \
-  dragonfractal/cca analyze
+docker run dragonfractal/cca scan --regions us-east-1
 ```
 
-Same detection engine, your machine. Billing data never leaves your network.
+Same detection engine, your machine. Output in table, JSON, YAML, markdown, or PDF. Billing data never leaves your network.
 
 ## Pricing
 
 | Tier | Price | What you get |
 |------|-------|-------------|
-| **Community** | Free, forever | Waste detection, recommendations, CLI + Docker image. No credit card. |
+| **Community** | Free, forever | 80+ detection rules, plain-English recommendations, CLI + Docker image. No credit card. |
 | **Pro** | $99/mo | Everything in Community + historical trends, alerts when new waste appears, email reports. |
 | **Enterprise** | $499/mo | Everything in Pro + team access controls, SSO, multi-account management. |
 
-The Community tier is a real product, not a crippled demo with a "upgrade to see your results" wall. You get the full detection engine, all finding categories, and plain-English recommendations. If Community is all you need, use it forever. I'd rather have 1,000 teams finding waste with the free tier than 10 teams on Enterprise.
+The Community tier is a real product, not a crippled demo with a "upgrade to see your results" wall. You get every detection rule, every finding category, and plain-English recommendations. If Community is all you need, use it forever. I'd rather have 1,000 teams finding waste with the free tier than 10 teams on Enterprise.
 
 Pro and Enterprise exist for teams that want the workflow around the findings -- alerts so you catch new waste before it runs for three months, history so you can show your CFO the savings trend, team features so the whole engineering org has visibility.
 
 ## What's next
 
-CCA currently covers the four waste categories I kept finding in every account I audited: idle networking, orphaned storage, log overspend, and cross-AZ transfer. The roadmap includes:
+CCA currently covers AWS with 80+ detection rules across compute, storage, networking, databases, serverless, analytics, monitoring, and security. The roadmap includes:
 
-- **RDS idle instance detection** -- reserved instances running at 5% CPU with no connections
-- **S3 lifecycle policy analysis** -- buckets with no lifecycle rules on infrequently accessed data
-- **Savings Plan and Reserved Instance coverage gaps** -- on-demand spend that could be committed
+- **More detection rules** -- reserved instance coverage gaps, savings plan optimization, S3 intelligent tiering analysis
 - **Azure support** -- same detection patterns, different cloud (coming soon)
+- **GCP support** -- planned after Azure
 
 Each new detection rule follows the same pattern: find the waste, quantify it in dollars, explain it in plain English, and give you the steps to fix it.
 
 ## The short version
 
-I spent a year consulting on AWS bills. The same waste patterns showed up in every account. I automated finding them. That automation is now Cloud Cost Analyzer.
+I spent a year consulting on AWS bills. The same waste patterns showed up in every account. I automated finding them. That collection of rules is now Cloud Cost Analyzer -- 80+ detection rules, built in Rust, shipped as a hosted service and a CLI.
 
 Try it: [www.dragonfractal.com](https://www.dragonfractal.com/)
 
