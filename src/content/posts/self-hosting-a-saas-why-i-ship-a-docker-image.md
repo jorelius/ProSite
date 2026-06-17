@@ -60,13 +60,13 @@ Sign up at [www.dragonfractal.com](https://www.dragonfractal.com/) to get your A
 curl -sSL https://releases.dragonfractal.com/install.sh | sh
 
 # Or pull the Docker image
-docker pull ghcr.io/dragonfractal/cca:latest
+docker pull dragonfractal/cca
 
 # Run a scan
 cloud-cost-analyzer scan --api-key <your-key> --regions us-east-1
 
 # Or via Docker
-docker run ghcr.io/dragonfractal/cca:latest scan --api-key <your-key> --regions us-east-1
+docker run dragonfractal/cca scan --api-key <your-key> --regions us-east-1
 ```
 
 The agent collects data, sends it to the CCA service, and the results show up in your CLI output and on the dashboard. Output formats include table (default), JSON, YAML, markdown, and PDF.
@@ -77,7 +77,7 @@ The agent is a single Rust binary. You can download it and run it directly. So w
 
 Two reasons:
 
-1. **CI/CD integration.** Teams that want to run the agent on a schedule in their pipeline don't want to manage binary versions and OS compatibility. `docker pull ghcr.io/dragonfractal/cca:latest` works the same in GitHub Actions, GitLab CI, Jenkins, and any other runner that supports containers.
+1. **CI/CD integration.** Teams that want to run the agent on a schedule in their pipeline don't want to manage binary versions and OS compatibility. `docker pull dragonfractal/cca` works the same in GitHub Actions, GitLab CI, Jenkins, and any other runner that supports containers.
 
 2. **No install friction.** Some engineers can't (or won't) install arbitrary binaries on their work machines. Docker is already approved in most environments. Pulling an image and running it is a lower trust bar than downloading and executing a binary.
 
@@ -102,5 +102,5 @@ Three reasons it's worth it:
 Try it: sign up at [www.dragonfractal.com](https://www.dragonfractal.com/) and pull the agent:
 
 ```bash
-docker pull ghcr.io/dragonfractal/cca:latest
+docker pull dragonfractal/cca
 ```

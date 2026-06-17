@@ -31,7 +31,7 @@ If you've been following along -- the [$6,000 AWS bill](/posts/the-6000-aws-bill
 curl -sSL https://releases.dragonfractal.com/install.sh | sh
 
 # Or pull the Docker image
-docker pull ghcr.io/dragonfractal/cca:latest
+docker pull dragonfractal/cca
 
 # Set up the IAM role
 cloud-cost-analyzer setup --provider aws --deploy
@@ -96,6 +96,6 @@ I spent a year consulting on AWS bills. The same waste patterns showed up in eve
 
 Sign up: [www.dragonfractal.com](https://www.dragonfractal.com/)
 
-Pull the agent: `docker pull ghcr.io/dragonfractal/cca:latest`
+Pull the agent: `docker pull dragonfractal/cca`
 
 Community tier: free, forever, no credit card.

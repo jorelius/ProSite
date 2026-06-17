@@ -6,7 +6,7 @@ I'm Jorel -- engineer and founder of Dragon Fractal, building Cloud Cost Analyze
 
 Before that, I spent 4 years at **Amazon Web Services** as a Lead SDE on [OpenSearch Serverless](https://aws.amazon.com/opensearch-service/features/serverless/), where I built the shard management and autoscaling systems. And before AWS, 16 years at **Cimpress / Vistaprint** building high-throughput rendering and document services (one handling 83k requests per minute). Two US patents in image rendering.
 
-Try CCA: [www.dragonfractal.com](https://www.dragonfractal.com/) | `docker pull ghcr.io/dragonfractal/cca`
+Try CCA: [www.dragonfractal.com](https://www.dragonfractal.com/) | `docker pull dragonfractal/cca`
 
 ## What I work with
 
