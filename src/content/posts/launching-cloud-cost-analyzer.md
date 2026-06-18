@@ -92,7 +92,7 @@ New rules take effect immediately for all users in managed mode -- the rules run
 
 ## The short version
 
-I spent a year consulting on AWS bills. The same waste patterns showed up in every account. I automated finding them. That collection of rules is now Cloud Cost Analyzer -- 89 detection rules, built in Rust, with an agent that runs in your environment and a dashboard that shows you exactly where you're wasting money.
+After 5 years at AWS building autoscaling systems, I spent a year consulting on AWS bills. The same waste patterns showed up in every account. I automated finding them. That collection of rules is now Cloud Cost Analyzer -- 89 detection rules, built in Rust, with an agent that runs in your environment and a dashboard that shows you exactly where you're wasting money.
 
 Sign up: [www.dragonfractal.com](https://www.dragonfractal.com/)
 

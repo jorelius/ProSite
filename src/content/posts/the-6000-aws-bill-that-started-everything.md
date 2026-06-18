@@ -12,7 +12,9 @@ tags:
 description: "How a single consulting engagement with a $6,000/mo AWS bill revealed the same waste patterns hiding in every account I looked at."
 ---
 
-Last year I left AWS and started consulting on cloud cost optimization. My first real engagement was a startup running about $6,000/month on AWS. They knew the number was too high but couldn't figure out where the money was going. AWS Cost Explorer showed them a stacked bar chart that basically said "EC2 is expensive." Not exactly actionable.
+I spent 5 years at AWS as a Lead SDE, building autoscaling and shard management systems for OpenSearch Serverless. The job was fleet optimization -- deciding how to distribute workloads, scale infrastructure, and keep costs down. I got very familiar with where cloud money goes and where it gets wasted.
+
+After leaving AWS, I started consulting on cloud cost optimization. My first real engagement was a startup running about $6,000/month on AWS. They knew the number was too high but couldn't figure out where the money was going. AWS Cost Explorer showed them a stacked bar chart that basically said "EC2 is expensive." Not exactly actionable.
 
 I spent a week inside their account. Here's what I found.
 
