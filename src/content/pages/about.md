@@ -4,7 +4,7 @@ title: "About"
 
 I'm Jorel -- engineer and founder of Dragon Fractal, building Cloud Cost Analyzer (CCA). After spending a year consulting on AWS cost optimization, I kept seeing the same patterns hidden in plain sight in AWS Cost Explorer -- idle NAT Gateways, unattached EBS volumes, CloudWatch logs no one reads, cross-AZ chatter. CCA surfaces these automatically with plain-English recommendations and Docker-pullable IAM-role detection. Community tier is free, forever.
 
-Before that, I spent 4 years at **Amazon Web Services** as a Lead SDE on [OpenSearch Serverless](https://aws.amazon.com/opensearch-service/features/serverless/), where I built the shard management and autoscaling systems. And before AWS, 16 years at **Cimpress / Vistaprint** building high-throughput rendering and document services (one handling 83k requests per minute). Two US patents in image rendering.
+Before that, I spent 5 years at **Amazon Web Services** as a Lead SDE on [OpenSearch Serverless](https://aws.amazon.com/opensearch-service/features/serverless/), where I built the shard management and autoscaling systems. And before AWS, 16 years at **Cimpress / Vistaprint** building high-throughput rendering and document services (one handling 83k requests per minute). Two US patents in image rendering.
 
 Try CCA: [www.dragonfractal.com](https://www.dragonfractal.com/) | `docker pull dragonfractal/cca`
 
